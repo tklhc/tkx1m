@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e17">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Karb%C3%BCr%20Maliyet%20Hesaplay%C4%B1c%C4%B1%22%2C%22short_name%22%3A%22Karb%C3%BCr%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0e17%22%2C%22theme_color%22%3A%22%230a0e17%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%25200%2520192%2520192%27%253E%253Crect%2520width%3D%27192%27%2520height%3D%27192%27%2520rx%3D%2732%27%2520fill%3D%27%25230a0e17%27%2F%253E%253Cpath%2520d%3D%27M96%252030L46%252058v76l50%252028%252050-28V58L96%252030z%27%2520stroke%3D%27%2523fbbf24%27%2520stroke-width%3D%274%27%2520fill%3D%27none%27%2F%253E%253Ccircle%2520cx%3D%2796%27%2520cy%3D%2792%27%2520r%3D%2716%27%2520fill%3D%27%2523fbbf24%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<title>Karbür Maliyet Hesaplayıcı</title>
+<script>
+if('serviceWorker' in navigator){
+  const swCode=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))));`;
+  const swBlob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+:root{--bg:#0a0e17;--card:#111827;--border:#1e2433;--gold:#fbbf24;--pink:#f472b6;--green:#34d399;--purple:#818cf8;--orange:#fb923c;--text:#e5e7eb;--dim:#9ca3af;--muted:#6b7280;--dark:#4b5563;--mono:'JetBrains Mono',monospace;--sans:'DM Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);font-family:var(--sans);color:var(--text);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+input[type="number"]{-moz-appearance:textfield}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
+.app{max-width:480px;margin:0 auto;min-height:100vh}
+.header{padding:32px 20px 20px;background:linear-gradient(135deg,#0f1628,#1a1230,#0f1628);border-bottom:1px solid var(--border)}
+.header-row{display:flex;align-items:center;gap:14px}
+.logo-icon{width:48px;height:48px;border-radius:12px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header h1{font-size:20px;font-weight:700;color:var(--gold);letter-spacing:0.08em;font-family:var(--mono);margin:0}
+.header p{font-size:12px;color:var(--muted);margin-top:2px}
+.form-body{padding:8px 20px 40px}
+.section-wrap{margin:0 -20px;padding:16px 20px 6px;position:relative;border-left:3px solid transparent}
+.section-wrap.mat{background:linear-gradient(135deg,rgba(251,191,36,0.07) 0%,rgba(251,146,60,0.03) 100%);border-left-color:rgba(251,191,36,0.4);border-top:1px solid rgba(251,191,36,0.1);border-bottom:1px solid rgba(251,191,36,0.05)}
+.section-wrap.coat{background:linear-gradient(135deg,rgba(236,72,153,0.07) 0%,rgba(168,85,247,0.03) 100%);border-left-color:rgba(236,72,153,0.4);border-top:1px solid rgba(236,72,153,0.1);border-bottom:1px solid rgba(236,72,153,0.05)}
+.section-wrap.prod{background:linear-gradient(135deg,rgba(16,185,129,0.07) 0%,rgba(6,182,212,0.03) 100%);border-left-color:rgba(16,185,129,0.4);border-top:1px solid rgba(16,185,129,0.1);border-bottom:1px solid rgba(16,185,129,0.05)}
+.section-wrap.price{background:linear-gradient(135deg,rgba(99,102,241,0.07) 0%,rgba(139,92,246,0.03) 100%);border-left-color:rgba(99,102,241,0.4);border-top:1px solid rgba(99,102,241,0.1);border-bottom:1px solid rgba(99,102,241,0.05)}
+.section-hdr{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.1em;margin:4px 0 14px;font-family:var(--mono)}
+.section-dot{width:6px;height:6px;border-radius:3px}
+.search-toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-radius:10px;border:1.5px solid var(--border);cursor:pointer;margin-bottom:14px}
+.search-toggle-text{font-size:14px;color:var(--dim);font-family:var(--mono);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.search-panel{margin:-8px 0 14px;background:var(--card);border-radius:10px;border:1.5px solid var(--gold);overflow:hidden;box-shadow:0 0 0 3px rgba(251,191,36,0.1);display:none}
+.search-panel.open{display:block}
+.search-panel.coat{border-color:var(--pink);box-shadow:0 0 0 3px rgba(244,114,182,0.1)}
+.search-panel input{width:100%;padding:12px 14px;background:transparent;border:none;border-bottom:1px solid var(--border);outline:none;color:#f3f4f6;font-size:16px;font-family:var(--mono);font-weight:500}
+.search-results{max-height:280px;overflow-y:auto}
+.search-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(30,36,51,0.5);cursor:pointer;transition:background 0.15s}
+.search-item:active{background:rgba(251,191,36,0.12)}
+.search-item-code{font-size:15px;font-weight:600;color:var(--gold);font-family:var(--mono)}
+.search-item-code.coat{color:var(--pink)}
+.search-item-code.coat-o{color:var(--orange)}
+.search-item-right{display:flex;align-items:center;gap:10px}
+.search-item-meta{font-size:10px;color:var(--dark)}
+.search-item-price{font-size:14px;color:#d1d5db;font-weight:600;font-family:var(--mono)}
+.search-empty{padding:16px 14px;font-size:13px;color:var(--dark);text-align:center}
+.series-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.series-btn{padding:10px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--dim);font-size:14px;font-weight:600;font-family:var(--mono);cursor:pointer;flex:1 1 auto;text-align:center;min-width:55px;transition:all 0.2s}
+.series-btn:active{transform:scale(0.96)}
+.series-btn.active{background:rgba(251,191,36,0.1);border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 3px rgba(251,191,36,0.08)}
+.dia-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.dia-btn{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.2s}
+.dia-btn:active{transform:scale(0.96)}
+.dia-btn.active{background:rgba(251,191,36,0.1);border-color:var(--gold);box-shadow:0 0 0 2px rgba(251,191,36,0.08)}
+.dia-btn.disabled{opacity:0.35;pointer-events:none}
+.dia-btn-code{font-size:13px;font-weight:600;color:#d1d5db;font-family:var(--mono)}
+.dia-btn-price{font-size:10px;color:var(--dark);font-family:var(--mono);margin-top:2px}
+.sel-box{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:10px;margin-bottom:14px;background:linear-gradient(135deg,rgba(251,191,36,0.06),rgba(251,191,36,0.02));border:1px solid rgba(251,191,36,0.2)}
+.sel-box.coat{background:linear-gradient(135deg,rgba(244,114,182,0.06),rgba(244,114,182,0.02));border-color:rgba(244,114,182,0.2)}
+.sel-box.coat-o{background:linear-gradient(135deg,rgba(251,146,60,0.06),rgba(251,146,60,0.02));border-color:rgba(251,146,60,0.2)}
+.sel-code{font-size:18px;font-weight:700;color:var(--gold);font-family:var(--mono)}
+.sel-code.coat{color:var(--pink)}
+.sel-code.coat-o{color:var(--orange)}
+.sel-meta{font-size:11px;color:var(--muted)}
+.sel-price{font-size:20px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.hint-box{display:flex;align-items:flex-start;gap:6px;padding:8px 12px;background:rgba(107,114,128,0.06);border-radius:8px;margin-bottom:14px}
+.hint-box span{font-size:10px;color:var(--dark);font-family:var(--mono);line-height:1.5}
+.field{margin-bottom:14px}
+.field-label{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.field-label span{font-size:13px;font-weight:500;color:var(--dim)}
+.field-label .sub{font-size:11px;color:var(--dark);margin-left:auto;font-family:var(--mono)}
+.input-wrap{display:flex;align-items:center;background:var(--card);border-radius:10px;border:1.5px solid var(--border);padding:0 14px;height:48px;transition:all 0.2s}
+.input-wrap:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(251,191,36,0.1)}
+.input-wrap input{flex:1;background:transparent;border:none;outline:none;color:#f3f4f6;font-size:16px;font-weight:500;font-family:var(--mono);width:100%}
+.input-wrap .suf{font-size:14px;color:var(--dark);font-weight:600;margin-left:8px;font-family:var(--mono)}
+.dual-row{display:flex;align-items:flex-end;gap:8px;margin-bottom:14px}
+.dual-row .field{flex:1;margin-bottom:0}
+.dual-arrow{display:flex;align-items:center;padding-bottom:14px;opacity:0.4}
+.dual-result{display:flex;flex-direction:column;align-items:flex-end;padding-bottom:8px;min-width:90px}
+.dual-result-label{font-size:10px;color:var(--dark);letter-spacing:0.04em;margin-bottom:3px}
+.dual-result-value{font-size:15px;font-weight:600;color:#d1d5db;font-family:var(--mono)}
+.clear-link{font-size:12px;color:var(--pink);cursor:pointer;font-family:var(--mono);opacity:0.7;text-align:right;display:block;margin:-6px 0 10px}
+.btn-row{display:flex;gap:12px;margin-top:28px}
+.reset-btn{display:flex;align-items:center;gap:6px;padding:14px 18px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-size:13px;font-weight:500;cursor:pointer}
+.calc-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:12px;border:none;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0a0e17;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--mono);letter-spacing:0.06em;box-shadow:0 4px 20px rgba(251,191,36,0.25)}
+.calc-btn:active{transform:scale(0.98)}
+.result-card{margin-top:28px;border-radius:16px;border:1px solid var(--border);padding:20px 20px 4px;background:linear-gradient(180deg,#111827,#0f1420);opacity:0;transform:translateY(20px);transition:all 0.5s cubic-bezier(0.16,1,0.3,1)}
+.result-card.show{opacity:1;transform:translateY(0)}
+.res-header{display:flex;align-items:center;gap:10px}
+.res-title{font-size:12px;font-weight:600;color:var(--gold);letter-spacing:0.1em;font-family:var(--mono)}
+.res-badge{margin-left:auto;padding:3px 10px;border-radius:6px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);font-size:12px;font-weight:600;color:var(--gold);font-family:var(--mono)}
+.res-divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.res-row .lbl{font-size:13px;color:var(--muted)}
+.res-row .val{font-size:14px;color:var(--dim);font-weight:500;font-family:var(--mono)}
+.res-row.cost .lbl{font-weight:600;color:var(--text)}
+.res-row.cost .val{font-weight:700;color:var(--text)}
+.res-row.highlight{background:rgba(129,140,248,0.08);border-radius:8px;padding:10px 12px;margin:6px -12px}
+.res-row.highlight .lbl{color:var(--purple)}
+.res-row.highlight .val{color:var(--purple)}
+.res-row.profit{background:rgba(52,211,153,0.08);border-radius:8px;padding:10px 12px;margin:6px -12px}
+.res-row.profit .lbl{color:var(--green)}
+.res-row.profit .val{color:var(--green)}
+.res-row.earn{background:rgba(251,191,36,0.08);border-radius:8px;padding:10px 12px;margin:6px -12px}
+.res-row.earn .lbl{color:var(--gold);font-weight:600}
+.res-row.earn .val{color:var(--gold);font-weight:700}
+.total-box{margin:16px -20px 0;padding:20px;text-align:center;border-radius:0 0 16px 16px;background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(245,158,11,0.04));border-top:1px solid rgba(251,191,36,0.15)}
+.total-label{font-size:11px;color:var(--gold);letter-spacing:0.12em;font-weight:600;font-family:var(--mono);margin-bottom:6px;opacity:0.7}
+.total-value{font-size:32px;font-weight:700;color:var(--gold);font-family:var(--mono);text-shadow:0 0 30px rgba(251,191,36,0.3)}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="header"><div class="header-row">
+<div class="logo-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2L4 8v12l10 6 10-6V8L14 2z" stroke="#fbbf24" stroke-width="1.5" fill="none"/><path d="M14 6l-6 3.5v7L14 20l6-3.5v-7L14 6z" fill="#fbbf24" opacity="0.2"/><circle cx="14" cy="13" r="3" fill="#fbbf24"/></svg></div>
+<div><h1>KARBÜR MALİYET</h1><p>Kesici Takım Hesaplayıcı</p></div>
+</div></div>
+<div class="form-body">
+
+<!-- HAMMADDE -->
+<div class="section-wrap mat">
+<div class="section-hdr"><div class="section-dot" style="background:var(--gold)"></div>HAMMADDE SEÇİMİ</div>
+<div class="search-toggle" onclick="togglePanel('mat')">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+<span class="search-toggle-text" id="matDisp">Hammadde kodu: EG6, EU10...</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2"><path id="matChev" d="M6 9l6 6 6-6"/></svg>
+</div>
+<div class="search-panel" id="matPanel"><input type="text" id="matQ" placeholder="Kod yazın: EG6, EU10..." oninput="searchMat()"><div class="search-results" id="matRes"></div></div>
+<div style="margin-bottom:6px"><span style="font-size:13px;font-weight:500;color:var(--dim)">Seri / Kalite</span></div>
+<div class="series-grid" id="serGrid"></div>
+<div id="diaSec" style="display:none"><div class="field-label"><span>Çap / Ürün Kodu</span><span class="sub" id="diaFP"></span></div><div class="dia-grid" id="diaGrid"></div></div>
+<div id="matSel" class="sel-box" style="display:none"><div><span class="sel-code" id="matSC"></span><br><span class="sel-meta" id="matSM"></span></div><div class="sel-price" id="matSP"></div></div>
+<div class="dual-row"><div class="field">
+<div class="field-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5" style="opacity:0.7"><path d="M2 12h20M6 8v8M18 8v8"/></svg><span>Kesim Uzunluğu</span><span class="sub" id="cutSub">/ 330 mm</span></div>
+<div class="input-wrap"><input type="number" inputmode="decimal" id="cutLen" placeholder="0" oninput="calc()"><span class="suf">mm</span></div>
+</div><div class="dual-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+<div class="dual-result"><span class="dual-result-label">Hammadde</span><span class="dual-result-value" id="cutPD">0,00 €</span></div></div>
+
+<!-- KAPLAMA -->
+</div>
+<div class="section-wrap coat">
+<div class="section-hdr"><div class="section-dot" style="background:var(--pink)"></div>KAPLAMA</div>
+<div class="search-toggle" onclick="togglePanel('coat')">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+<span class="search-toggle-text" id="coatDisp">Kaplama kodu: PA3, OL6-1...</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2"><path id="coatChev" d="M6 9l6 6 6-6"/></svg>
+</div>
+<div class="search-panel coat" id="coatPanel"><input type="text" id="coatQ" placeholder="PA3, PT6-2, OL6-1, OTP20-6..." oninput="searchCoat()"><div class="search-results" id="coatRes"></div></div>
+<div class="hint-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+<span><b style="color:var(--pink)">P Firma:</b> 120mm→PA3 | 200mm→PA3-2 | 250mm→PA3-3<br><b style="color:var(--orange)">O Firma:</b> 50mm→OL6-1 | 51-75→OL6-2 | 76-100→OL6-3 | 101-150→OL6-4 | 151-200→OL6-5 | 201-300→OL6-6</span></div>
+<div id="coatSel" class="sel-box coat" style="display:none"><div><span class="sel-code coat" id="coatSC"></span><br><span class="sel-meta" id="coatSMeta"></span></div><div class="sel-price" id="coatSP"></div></div>
+<span class="clear-link" id="coatClr" style="display:none" onclick="clearCoat()">✕ Kaplama seçimini temizle</span>
+<div class="field" id="manCoatF"><div class="field-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.5" style="opacity:0.7"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10c0-2.2 1.8-4 4-4s4 1.8 4 4"/></svg><span>Manuel Kaplama Fiyatı</span></div><div class="input-wrap"><input type="number" inputmode="decimal" id="manCoat" placeholder="0,00" oninput="calc()"><span class="suf">€</span></div></div>
+
+<!-- ÜRETİM -->
+</div>
+<div class="section-wrap prod">
+<div class="section-hdr"><div class="section-dot" style="background:var(--green)"></div>ÜRETİM</div>
+<div class="dual-row"><div class="field"><div class="field-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.5" style="opacity:0.7"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>İşçilik Süresi</span><span class="sub">30 €/saat</span></div><div class="input-wrap"><input type="number" inputmode="decimal" id="labMin" placeholder="0" oninput="calc()"><span class="suf">dk</span></div></div><div class="dual-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div><div class="dual-result"><span class="dual-result-label">İşçilik</span><span class="dual-result-value" id="labD">0,00 €</span></div></div>
+<div class="dual-row"><div class="field"><div class="field-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.5" style="opacity:0.7"><path d="M4 20L20 4M8 4h12v12"/></svg><span>Taşlama Süresi</span><span class="sub">15 €/saat</span></div><div class="input-wrap"><input type="number" inputmode="decimal" id="grnMin" placeholder="0" oninput="calc()"><span class="suf">dk</span></div></div><div class="dual-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div><div class="dual-result"><span class="dual-result-label">Taşlama</span><span class="dual-result-value" id="grnD">0,00 €</span></div></div>
+
+<!-- FİYATLANDIRMA -->
+</div>
+<div class="section-wrap price">
+<div class="section-hdr"><div class="section-dot" style="background:var(--purple)"></div>FİYATLANDIRMA</div>
+<div class="field"><div class="field-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.5" style="opacity:0.7"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Risk Payı</span></div><div class="input-wrap"><input type="number" inputmode="decimal" id="riskP" placeholder="15" value="15" oninput="calc()"><span class="suf">%</span></div></div>
+<div class="field"><div class="field-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.5" style="opacity:0.7"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg><span>Kâr Oranı</span></div><div class="input-wrap"><input type="number" inputmode="decimal" id="profP" placeholder="0" oninput="calc()"><span class="suf">%</span></div></div>
+
+</div>
+<div class="btn-row">
+<button class="reset-btn" onclick="resetAll()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>Sıfırla</button>
+<button class="calc-btn" onclick="showRes()">HESAPLA<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+</div>
+
+<div class="result-card" id="resCard">
+<div class="res-header"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg><span class="res-title">MALİYET DETAYI</span><span class="res-badge" id="rBadge" style="display:none"></span></div>
+<div class="res-divider"></div>
+<div class="res-row"><span class="lbl" id="rML">Hammadde</span><span class="val" id="rMV">0,00 €</span></div>
+<div class="res-row"><span class="lbl" id="rCL">Kaplama</span><span class="val" id="rCV">0,00 €</span></div>
+<div class="res-row"><span class="lbl" id="rLL">İşçilik</span><span class="val" id="rLV">0,00 €</span></div>
+<div class="res-row"><span class="lbl" id="rGL">Taşlama</span><span class="val" id="rGV">0,00 €</span></div>
+<div class="res-divider" style="margin:12px 0"></div>
+<div class="res-row cost"><span class="lbl">Toplam Maliyet</span><span class="val" id="rTC">0,00 €</span></div>
+<div class="res-row highlight"><span class="lbl" id="rRkL">Risk Payı</span><span class="val" id="rRkV">+0,00 €</span></div>
+<div class="res-row"><span class="lbl" style="color:var(--dim)">Risk Dahil Maliyet</span><span class="val" style="color:#d1d5db" id="rCR">0,00 €</span></div>
+<div class="res-row profit"><span class="lbl" id="rPrL">Kâr</span><span class="val" id="rPrV">+0,00 €</span></div>
+<div class="res-row earn"><span class="lbl" id="rEaL">Kazanç</span><span class="val" id="rEaV">0,00 €</span></div>
+<div class="total-box"><div class="total-label">TOPLAM SATIŞ FİYATI</div><div class="total-value" id="rTP">0,00 €</div></div>
+</div>
+</div></div>
+
+<script>
+const HL=30,HG=15,FL=330;
+const PDB={
+E:{l:"E - Standart",i:[{c:"E2",p:null},{c:"E3",p:10.09},{c:"E4",p:16.82},{c:"E5",p:26.19},{c:"E6",p:36.09},{c:"E8",p:63.68},{c:"E10",p:97.75},{c:"E12",p:134.52},{c:"E14",p:182.05},{c:"E16",p:242.46},{c:"E18",p:305},{c:"E20",p:372.98},{c:"E22",p:448.64},{c:"E25",p:575.66},{c:"E30",p:769.40},{c:"E32",p:934.04}]},
+EU:{l:"EU",i:[{c:"EU3",p:10.09},{c:"EU4",p:17.06},{c:"EU5",p:26.67},{c:"EU6",p:36.72},{c:"EU8",p:64.55},{c:"EU10",p:99.89},{c:"EU12",p:140.19},{c:"EU14",p:189.74},{c:"EU16",p:252.85},{c:"EU18",p:316.65},{c:"EU20",p:388.37},{c:"EU22",p:464.34},{c:"EU25",p:596.30},{c:"EU30",p:838.93},{c:"EU32",p:977.08}]},
+ES:{l:"ES",i:[{c:"ES2",p:null},{c:"ES3",p:10.09},{c:"ES4",p:16.44},{c:"ES5",p:24.75},{c:"ES6",p:34.79},{c:"ES8",p:61.22},{c:"ES10",p:92.43},{c:"ES12",p:129.54},{c:"ES14",p:173.43},{c:"ES16",p:233.81},{c:"ES18",p:292.71},{c:"ES20",p:358.97},{c:"ES22",p:432.49},{c:"ES25",p:554.85},{c:"ES30",p:749.49},{c:"ES32",p:898.72}]},
+EG:{l:"EG",i:[{c:"EG2",p:7.79},{c:"EG3",p:9.21},{c:"EG4",p:12.71},{c:"EG5",p:19.27},{c:"EG6",p:27.07},{c:"EG8",p:46.96},{c:"EG10",p:66.48},{c:"EG12",p:99.86},{c:"EG14",p:133.90},{c:"EG16",p:177.92},{c:"EG18",p:221.89},{c:"EG20",p:272.52},{c:"EG22",p:327.88},{c:"EG25",p:423.53},{c:"EG30",p:596.51},{c:"EG32",p:678.67}]},
+EGP:{l:"EGP",i:[{c:"EGP3",p:1.15},{c:"EGP4",p:1.97},{c:"EGP5",p:2.95},{c:"EGP6",p:4.29},{c:"EGP8",p:8.89},{c:"EGP10",p:15.50},{c:"EGP12",p:25.35},{c:"EGP14",p:33.91},{c:"EGP1492",p:38.30},{c:"EGP16",p:49.70},{c:"EGP16150",p:64.46},{c:"EGP18",p:62.34},{c:"EGP20",p:86.74}]}
+};
+const AM=[];Object.entries(PDB).forEach(([k,s])=>s.i.forEach(it=>AM.push({...it,sk:k,sl:s.l})));
+
+const PD=[3,4,5,6,8,10,12,14,16,18,20,25,28,32,36,40,50];
+const P120={PA:[.684,.741,.855,.912,1.311,1.482,1.653,1.995,2.508,3.078,3.534,4.902,5.358,7.98,14.25,23.94,48.165],PT:[.77,.834,.962,1.026,1.475,1.667,1.86,2.244,2.822,3.463,3.976,5.515,6.028,8.978,16.031,26.933,54.186],PAL:[.855,.926,1.069,1.14,1.639,1.853,2.066,2.494,3.135,3.848,4.418,6.128,6.698,9.975,17.813,29.925,60.206],"PTİT":[1.154,1.25,1.443,1.539,2.212,2.501,2.789,3.367,4.232,5.194,5.964,8.272,9.042,13.466,24.047,40.399,81.278],PAV:[1.09,1.181,1.363,1.454,2.089,2.362,2.634,3.18,3.997,4.906,5.632,7.813,8.539,12.718,22.711,38.154,76.763]};
+const P200={PA:[.855,.928,1.069,1.14,1.639,1.853,2.066,2.494,3.135,3.848,4.418,6.128,6.698,9.975,17.813,29.925,50.206],PT:[.962,1.044,1.202,1.283,1.844,2.084,2.325,2.805,3.527,4.328,4.97,6.893,7.535,11.222,20.039,33.666,57.732],PAL:[1.069,1.16,1.336,1.425,2.048,2.316,2.583,3.117,3.919,4.809,5.522,7.659,8.372,12.469,22.266,37.406,75.258],"PTİT":[1.443,1.565,1.804,1.924,2.765,3.126,3.487,4.208,5.29,6.493,7.455,10.34,11.302,16.833,30.059,50.498,101.598],PAV:[1.363,1.478,1.703,1.817,2.612,2.952,3.293,3.974,4.996,6.132,7.04,9.766,10.574,15.898,28.389,47.693,95.964]};
+const P250={PA:[1.154,1.252,1.443,1.539,2.212,2.501,2.789,3.367,4.232,5.194,5.964,8.272,9.042,13.466,24.047,40.399,81.278],PT:[1.299,1.409,1.623,1.731,2.489,2.813,3.138,3.787,4.761,5.843,6.709,9.306,10.172,15.15,27.053,45.449,91.438],PAL:[1.443,1.565,1.804,1.924,2.765,3.126,3.487,4.208,5.29,6.493,7.455,10.34,11.302,16.833,30.059,50.498,101.598],"PTİT":[1.948,2.113,2.435,2.597,3.713,4.22,4.707,5.681,7.142,8.765,10.064,13.959,15.258,22.724,40.579,68.173,137.157],PAV:[1.84,1.996,2.299,2.453,3.526,3.986,4.446,5.365,6.745,8.278,9.505,13.184,14.41,21.462,38.325,64.388,129.538]};
+
+const OD=[3,4,6,8,10,12,14,16,18,20,22,26,30,32,35,40,50];
+const OT=["L","AL","XC","HELICA","ALN","PR","ALD","ALT","TS","D","TP","DLC","MY"];
+const O50={L:[1.48,1.87,2.12,2.46,2.66,2.95,3.58,3.98,4.42,5.79,7.23,8.72,10.41,10.41,14.31,17.40,26.76],AL:[1.48,1.87,2.12,2.46,2.66,2.95,3.58,3.98,4.42,5.79,7.23,8.72,10.41,10.41,14.31,17.40,26.76],XC:[1.58,2.00,2.27,2.63,2.84,3.16,3.84,4.26,4.73,6.19,7.73,9.33,11.14,11.14,15.31,18.61,28.64],HELICA:[1.58,2.00,2.27,2.63,2.84,3.16,3.84,4.26,4.73,6.19,7.73,9.33,11.14,11.14,15.31,18.61,28.64],ALN:[1.67,2.12,2.40,2.78,3.00,3.33,4.05,4.50,5.00,6.54,8.17,9.85,11.76,11.76,16.17,19.66,30.24],PR:[1.67,2.12,2.40,2.78,3.00,3.33,4.05,4.50,5.00,6.54,8.17,9.85,11.76,11.76,16.17,19.66,30.24],ALD:[1.67,2.12,2.40,2.78,3.00,3.33,4.05,4.50,5.00,6.54,8.17,9.85,11.76,11.76,16.17,19.66,30.24],ALT:[1.77,2.25,2.55,2.95,3.19,3.54,4.30,4.78,5.31,6.95,8.67,10.46,12.49,12.49,17.17,20.88,32.12],TS:[1.77,2.25,2.55,2.95,3.19,3.54,4.30,4.78,5.31,6.95,8.67,10.46,12.49,12.49,17.17,20.88,32.12],D:[1.77,2.25,2.55,2.95,3.19,3.54,4.30,4.78,5.31,6.95,8.67,10.46,12.49,12.49,17.17,20.88,32.12],TP:[2.26,2.86,3.25,3.76,4.06,4.51,5.48,6.09,6.77,8.86,11.06,13.34,15.92,15.92,21.89,26.62,40.95],DLC:[1.87,2.38,2.70,3.12,3.37,3.75,4.55,5.06,5.62,7.35,9.18,11.07,13.22,13.22,18.17,22.09,33.99],MY:[1.96,2.49,2.83,3.27,3.53,3.92,4.77,5.30,5.88,7.70,9.61,11.59,13.84,13.84,19.03,23.14,35.59]};
+const O51={L:[1.97,2.29,2.78,3.03,3.24,3.86,5.45,6.08,6.41,7.01,8.76,10.59,13.66,17.26,20.60,25.27,37.60],AL:[1.97,2.29,2.78,3.03,3.24,3.86,5.45,6.08,6.41,7.01,8.76,10.59,13.66,17.26,20.60,25.27,37.60],XC:[2.11,2.45,2.97,3.24,3.47,4.13,5.83,6.51,6.85,7.50,9.38,11.33,14.62,18.47,22.05,27.04,40.23],HELICA:[2.11,2.45,2.97,3.24,3.47,4.13,5.83,6.51,6.85,7.50,9.38,11.33,14.62,18.47,22.05,27.04,40.23],ALN:[2.23,2.59,3.14,3.42,3.66,4.36,6.16,6.87,7.24,7.92,9.90,11.97,15.44,19.50,23.28,28.55,42.48],PR:[2.23,2.59,3.14,3.42,3.66,4.36,6.16,6.87,7.24,7.92,9.90,11.97,15.44,19.50,23.28,28.55,42.48],ALD:[2.23,2.59,3.14,3.42,3.66,4.36,6.16,6.87,7.24,7.92,9.90,11.97,15.44,19.50,23.28,28.55,42.48],ALT:[2.37,2.75,3.33,3.63,3.89,4.63,6.54,7.30,7.69,8.41,10.51,12.71,16.39,20.71,24.72,30.32,45.11],TS:[2.37,2.75,3.33,3.63,3.89,4.63,6.54,7.30,7.69,8.41,10.51,12.71,16.39,20.71,24.72,30.32,45.11],D:[2.37,2.75,3.33,3.63,3.89,4.63,6.54,7.30,7.69,8.41,10.51,12.71,16.39,20.71,24.72,30.32,45.11],TP:[3.02,3.51,4.25,4.63,4.96,5.90,8.34,9.30,9.80,10.72,13.41,16.21,20.90,26.40,31.52,38.66,57.52],DLC:[2.50,2.91,3.53,3.84,4.12,4.90,6.92,7.72,8.14,8.90,11.13,13.45,17.35,21.92,26.17,32.09,47.75],MY:[2.62,3.05,3.70,4.03,4.31,5.13,7.25,8.09,8.52,9.32,11.65,14.09,18.17,22.95,27.40,33.60,50.00]};
+const O76={L:[2.82,3.05,3.52,3.83,4.05,4.63,6.42,7.02,8.24,8.99,10.12,12.55,15.61,20.13,26.33,32.36,47.15],AL:[2.82,3.05,3.52,3.83,4.05,4.63,6.42,7.02,8.24,8.99,10.12,12.55,15.61,20.13,26.33,32.36,47.15],XC:[3.02,3.27,3.77,4.09,4.33,4.96,6.87,7.51,8.81,9.61,10.83,13.43,16.70,21.54,28.17,34.63,50.45],HELICA:[3.02,3.27,3.77,4.09,4.33,4.96,6.87,7.51,8.81,9.61,10.83,13.43,16.70,21.54,28.17,34.63,50.45],ALN:[3.19,3.45,3.98,4.32,4.57,5.23,7.26,7.93,9.31,10.15,11.44,14.19,17.64,22.75,29.75,36.57,53.28],PR:[3.19,3.45,3.98,4.32,4.57,5.23,7.26,7.93,9.31,10.15,11.44,14.19,17.64,22.75,29.75,36.57,53.28],ALD:[3.19,3.45,3.98,4.32,4.57,5.23,7.26,7.93,9.31,10.15,11.44,14.19,17.64,22.75,29.75,36.57,53.28],ALT:[3.39,3.66,4.23,4.59,4.86,5.56,7.71,8.42,9.88,10.78,12.14,15.06,18.73,24.16,31.59,38.83,56.58],TS:[3.39,3.66,4.23,4.59,4.86,5.56,7.71,8.42,9.88,10.78,12.14,15.06,18.73,24.16,31.59,38.83,56.58],D:[3.39,3.66,4.23,4.59,4.86,5.56,7.71,8.42,9.88,10.78,12.14,15.06,18.73,24.16,31.59,38.83,56.58],TP:[4.32,4.67,5.39,5.85,6.19,7.09,9.83,10.74,12.60,13.75,15.48,19.21,23.89,30.81,40.28,49.51,72.14],DLC:[3.59,3.88,4.47,4.86,5.14,5.88,8.16,8.91,10.46,11.41,12.85,15.94,19.83,25.57,33.43,41.10,59.88],MY:[3.76,4.06,4.68,5.09,5.38,6.16,8.54,9.33,10.95,11.95,13.46,16.70,20.76,26.78,35.01,43.04,62.71]};
+const O101={L:[3.62,4.17,4.88,5.63,5.94,7.22,10.05,10.63,12.04,12.71,13.71,15.11,22.77,28.86,34.64,40.42,59.77],AL:[3.62,4.17,4.88,5.63,5.94,7.22,10.05,10.63,12.04,12.71,13.71,15.11,22.77,28.86,34.64,40.42,59.77],XC:[3.88,4.46,5.22,6.02,6.36,7.72,10.76,11.37,12.88,13.60,14.67,16.17,24.36,30.88,37.06,43.25,63.95],HELICA:[3.88,4.46,5.22,6.02,6.36,7.72,10.76,11.37,12.88,13.60,14.67,16.17,24.36,30.88,37.06,43.25,63.95],ALN:[4.09,4.71,5.51,6.36,6.71,8.15,11.36,12.01,13.60,14.36,15.49,17.07,25.73,32.62,39.14,45.68,67.54],PR:[4.09,4.71,5.51,6.36,6.71,8.15,11.36,12.01,13.60,14.36,15.49,17.07,25.73,32.62,39.14,45.68,67.54],ALD:[4.09,4.71,5.51,6.36,6.71,8.15,11.36,12.01,13.60,14.36,15.49,17.07,25.73,32.62,39.14,45.68,67.54],ALT:[4.35,5.01,5.85,6.76,7.13,8.66,12.06,12.76,14.44,15.25,16.45,18.13,27.32,34.64,41.57,48.51,71.72],TS:[4.35,5.01,5.85,6.76,7.13,8.66,12.06,12.76,14.44,15.25,16.45,18.13,27.32,34.64,41.57,48.51,71.72],D:[4.35,5.01,5.85,6.76,7.13,8.66,12.06,12.76,14.44,15.25,16.45,18.13,27.32,34.64,41.57,48.51,71.72],TP:[5.54,6.38,7.46,8.61,9.09,11.04,15.38,16.26,18.41,19.45,20.97,23.12,34.83,44.16,53.00,61.85,91.45],DLC:[4.60,5.30,6.19,7.15,7.54,9.16,12.77,13.50,15.28,16.14,17.41,19.19,28.91,36.66,43.99,51.34,75.91],MY:[4.82,5.55,6.49,7.49,7.90,9.60,13.37,14.14,16.01,16.90,18.23,20.10,30.28,38.39,46.07,53.76,79.49]};
+const O151={L:[4.38,5.20,5.97,6.79,7.75,9.13,13.52,14.68,15.81,18.03,19.77,22.21,27.81,36.70,46.36,55.57,76.76],AL:[4.38,5.20,5.97,6.79,7.75,9.13,13.52,14.68,15.81,18.03,19.77,22.21,27.81,36.70,46.36,55.57,76.76],XC:[4.68,5.56,6.39,7.27,8.30,9.76,14.47,15.71,16.92,19.29,21.16,23.77,29.76,39.27,49.60,59.46,82.12],HELICA:[4.68,5.56,6.39,7.27,8.30,9.76,14.47,15.71,16.92,19.29,21.16,23.77,29.76,39.27,49.60,59.46,82.12],ALN:[4.95,5.88,6.75,7.67,8.76,10.31,15.28,16.59,17.86,20.37,22.34,25.10,31.43,41.41,52.38,62.79,86.72],PR:[4.95,5.88,6.75,7.67,8.76,10.31,15.28,16.59,17.86,20.37,22.34,25.10,31.43,41.41,52.38,62.79,86.72],ALD:[4.95,5.88,6.75,7.67,8.76,10.31,15.28,16.59,17.86,20.37,22.34,25.10,31.43,41.41,52.38,62.79,86.72],ALT:[5.25,6.24,7.17,8.15,9.31,10.95,16.23,17.62,18.97,21.63,23.73,26.66,33.38,44.04,55.63,66.68,92.10],TS:[5.25,6.24,7.17,8.15,9.31,10.95,16.23,17.62,18.97,21.63,23.73,26.66,33.38,44.04,55.63,66.68,92.10],D:[5.25,6.24,7.17,8.15,9.31,10.95,16.23,17.62,18.97,21.63,23.73,26.66,33.38,44.04,55.63,66.68,92.10],TP:[6.70,7.96,9.14,10.39,11.86,13.96,20.69,22.46,24.19,27.58,30.25,33.99,42.56,56.15,70.93,85.02,117.42],DLC:[5.56,6.60,7.59,8.62,9.85,11.59,17.17,18.65,20.08,22.90,25.11,28.21,35.32,46.61,58.87,70.57,97.47],MY:[5.82,6.92,7.94,9.03,10.31,12.14,17.98,19.53,21.03,23.98,26.30,29.54,36.99,48.81,61.65,73.91,102.07]};
+const O201={L:[6.80,7.51,9.97,10.86,12.91,15.00,20.77,22.55,23.83,27.69,30.47,34.12,42.72,56.37,71.20,85.36,118.15],AL:[6.80,7.51,9.97,10.86,12.91,15.00,20.77,22.55,23.83,27.69,30.47,34.12,42.72,56.37,71.20,85.36,118.15],XC:[7.27,8.04,10.67,11.62,13.82,16.05,22.22,24.13,25.50,29.63,32.60,36.51,45.71,60.32,76.19,91.33,126.42],HELICA:[7.27,8.04,10.67,11.62,13.82,16.05,22.22,24.13,25.50,29.63,32.60,36.51,45.71,60.32,76.19,91.33,126.42],ALN:[7.68,8.49,11.27,12.27,14.59,16.95,23.47,25.48,26.93,31.29,34.43,38.55,48.28,63.70,80.46,96.45,133.51],PR:[7.68,8.49,11.27,12.27,14.59,16.95,23.47,25.48,26.93,31.29,34.43,38.55,48.28,63.70,80.46,96.45,133.51],ALD:[7.68,8.49,11.27,12.27,14.59,16.95,23.47,25.48,26.93,31.29,34.43,38.55,48.28,63.70,80.46,96.45,133.51],ALT:[8.16,9.01,11.97,13.03,15.50,18.00,24.92,27.06,28.60,33.23,36.56,40.94,51.27,67.64,85.44,102.43,141.78],TS:[8.16,9.01,11.97,13.03,15.50,18.00,24.92,27.06,28.60,33.23,36.56,40.94,51.27,67.64,85.44,102.43,141.78],D:[8.16,9.01,11.97,13.03,15.50,18.00,24.92,27.06,28.60,33.23,36.56,40.94,51.27,67.64,85.44,102.43,141.78],TP:[10.40,11.49,15.26,16.61,19.76,22.95,31.77,34.50,36.47,42.37,46.61,52.20,65.37,86.25,108.94,130.60,180.77],DLC:[8.63,9.54,12.66,13.79,16.40,19.05,26.38,28.64,30.27,35.17,38.69,43.33,54.27,71.59,90.43,108.40,150.05],MY:[9.04,9.99,13.26,14.44,17.18,19.95,27.62,29.99,31.70,36.83,40.52,45.38,56.82,74.97,94.70,113.52,157.14]};
+const OTABLES={1:O50,2:O51,3:O76,4:O101,5:O151,6:O201};
+const OLENS={"1":"50mm","2":"51-75mm","3":"76-100mm","4":"101-150mm","5":"151-200mm","6":"201-300mm"};
+
+const AC=[];
+["PA","PT","PAL","PTİT","PAV"].forEach(t=>{PD.forEach((d,i)=>{[{s:"",l:120},{s:"-2",l:200},{s:"-3",l:250}].forEach(({s,l})=>{const tb=l===120?P120:l===200?P200:P250;if(tb[t]&&tb[t][i]!=null)AC.push({code:t+d+s,type:t,dia:d,len:l+"mm",price:tb[t][i],firm:"P"})})})});
+OT.forEach(t=>{OD.forEach((d,i)=>{[1,2,3,4,5,6].forEach(g=>{const tb=OTABLES[g];if(tb[t]&&tb[t][i]!=null)AC.push({code:"O"+t+d+"-"+g,type:t,dia:d,len:OLENS[g],price:tb[t][i],firm:"O"})})})});
+
+let S={ser:"",item:null,coat:null};
+function fmt(v){if(isNaN(v)||v===0)return"0,00 €";return v.toFixed(2).replace(".",",")+" €"}
+function pn(id){const v=parseFloat(document.getElementById(id).value);return isNaN(v)?0:v}
+function gEL(){if(!S.item)return FL;if(S.item.c==="EGP1492")return 92;if(S.item.c==="EGP16150")return 150;return FL}
+
+function togglePanel(w){const p=document.getElementById(w+"Panel"),c=document.getElementById(w+"Chev");const open=!p.classList.contains("open");p.classList.toggle("open",open);c.setAttribute("d",open?"M18 15l-6-6-6 6":"M6 9l6 6 6-6");if(open)p.querySelector("input").focus()}
+
+let _mf=[];
+function searchMat(){const q=document.getElementById("matQ").value.toLowerCase().trim(),r=document.getElementById("matRes");if(!q){r.innerHTML="";return}_mf=AM.filter(i=>i.c.toLowerCase().includes(q)).slice(0,12);if(!_mf.length){r.innerHTML='<div class="search-empty">Sonuç bulunamadı</div>';return}r.innerHTML=_mf.map((it,i)=>`<div class="search-item" onclick="selMat(${i})"><span class="search-item-code">${it.c}</span><div class="search-item-right"><span class="search-item-meta">${it.sl}</span><span class="search-item-price">${it.p?fmt(it.p):"—"}</span></div></div>`).join("")}
+function selMat(i){const it=_mf[i];if(!it||!it.p)return;S.ser=it.sk;S.item=it;document.getElementById("matQ").value="";document.getElementById("matRes").innerHTML="";document.getElementById("matPanel").classList.remove("open");document.getElementById("matChev").setAttribute("d","M6 9l6 6 6-6");updMat();renSer();renDia();calc()}
+
+function renSer(){document.getElementById("serGrid").innerHTML=Object.keys(PDB).map(k=>`<button class="series-btn ${S.ser===k?'active':''}" onclick="pickSer('${k}')">${k}</button>`).join("")}
+function pickSer(k){S.ser=k;S.item=null;renSer();renDia();updMat();calc()}
+function renDia(){const sec=document.getElementById("diaSec");if(!S.ser){sec.style.display="none";return}sec.style.display="block";document.getElementById("diaGrid").innerHTML=PDB[S.ser].i.map(it=>`<button class="dia-btn ${S.item&&S.item.c===it.c?'active':''} ${it.p===null?'disabled':''}" onclick="pickDia('${it.c}')"><span class="dia-btn-code">${it.c}</span><span class="dia-btn-price">${it.p?fmt(it.p):"—"}</span></button>`).join("");document.getElementById("diaFP").textContent=S.item?.p?"Tam Boy: "+fmt(S.item.p):""}
+function pickDia(c){const it=PDB[S.ser].i.find(x=>x.c===c);if(!it||it.p===null)return;S.item={...it,sk:S.ser,sl:PDB[S.ser].l};renDia();updMat();calc()}
+function updMat(){const d=document.getElementById("matDisp"),b=document.getElementById("matSel");if(S.item?.p){d.textContent=S.item.c+" — "+fmt(S.item.p);b.style.display="flex";document.getElementById("matSC").textContent=S.item.c;document.getElementById("matSM").textContent=gEL()+" mm · "+PDB[S.ser].l;document.getElementById("matSP").textContent=fmt(S.item.p);document.getElementById("cutSub").textContent="/ "+gEL()+" mm"}else{d.textContent="Hammadde kodu: EG6, EU10...";b.style.display="none";document.getElementById("cutSub").textContent="/ 330 mm"}}
+
+let _cf=[];
+function searchCoat(){const raw=document.getElementById("coatQ").value.trim(),r=document.getElementById("coatRes");if(!raw){r.innerHTML="";return}const q=raw.toUpperCase().replace(/İ/g,"İ").replace(/I(?!T)/g,"İ");_cf=AC.filter(c=>c.code.toUpperCase().includes(q)).slice(0,15);if(!_cf.length){r.innerHTML='<div class="search-empty">Sonuç bulunamadı</div>';return}r.innerHTML=_cf.map((it,i)=>`<div class="search-item" onclick="selCoat(${i})"><span class="search-item-code ${it.firm==='O'?'coat-o':'coat'}">${it.code}</span><div class="search-item-right"><span class="search-item-meta">${it.firm==="O"?"O·":"P·"}${it.type} · Ø${it.dia} · ${it.len}</span><span class="search-item-price">${fmt(it.price)}</span></div></div>`).join("")}
+function selCoat(i){S.coat=_cf[i];document.getElementById("coatQ").value="";document.getElementById("coatRes").innerHTML="";document.getElementById("coatPanel").classList.remove("open");document.getElementById("coatChev").setAttribute("d","M6 9l6 6 6-6");updCoat();calc()}
+function clearCoat(){S.coat=null;updCoat();calc()}
+function updCoat(){const d=document.getElementById("coatDisp"),b=document.getElementById("coatSel"),cl=document.getElementById("coatClr"),m=document.getElementById("manCoatF");if(S.coat){d.textContent=S.coat.code+" — "+fmt(S.coat.price);b.style.display="flex";const isO=S.coat.firm==="O";b.className="sel-box "+(isO?"coat-o":"coat");document.getElementById("coatSC").className="sel-code "+(isO?"coat-o":"coat");document.getElementById("coatSC").textContent=S.coat.code;document.getElementById("coatSMeta").textContent=(isO?"O Firma · ":"P Firma · ")+S.coat.type+" · Ø"+S.coat.dia+" · "+S.coat.len;document.getElementById("coatSP").textContent=fmt(S.coat.price);cl.style.display="block";m.style.display="none"}else{d.textContent="Kaplama kodu: PA3, OL6-1...";b.style.display="none";cl.style.display="none";m.style.display="block"}}
+
+function calc(){const el=gEL(),fp=S.item?.p||0,cl=pn("cutLen");const cp=cl&&fp?(fp/el)*cl:0;const coP=S.coat?S.coat.price:pn("manCoat");const lp=(pn("labMin")/60)*HL,gp=(pn("grnMin")/60)*HG;document.getElementById("cutPD").textContent=fmt(cp);document.getElementById("labD").textContent=fmt(lp);document.getElementById("grnD").textContent=fmt(gp);window._c={cp,coP,lp,gp}}
+
+function showRes(){calc();const{cp,coP,lp,gp}=window._c;const tc=cp+coP+lp+gp,rk=pn("riskP"),pr=pn("profP");const ra=tc*(rk/100),cr=tc+ra,pa=cr*(pr/100),tp=cr+pa;const el=gEL(),cl=pn("cutLen"),lm=pn("labMin"),gm=pn("grnMin");const bg=document.getElementById("rBadge");if(S.item){bg.textContent=S.item.c;bg.style.display="inline"}else bg.style.display="none";document.getElementById("rML").textContent=`Hammadde (${cl||0}/${el} mm)`;document.getElementById("rMV").textContent=fmt(cp);document.getElementById("rCL").textContent="Kaplama"+(S.coat?" ("+S.coat.code+")":"");document.getElementById("rCV").textContent=fmt(coP);document.getElementById("rLL").textContent=`İşçilik (${lm||0} dk)`;document.getElementById("rLV").textContent=fmt(lp);document.getElementById("rGL").textContent=`Taşlama (${gm||0} dk)`;document.getElementById("rGV").textContent=fmt(gp);document.getElementById("rTC").textContent=fmt(tc);document.getElementById("rRkL").textContent=`Risk Payı (%${rk||0})`;document.getElementById("rRkV").textContent="+"+fmt(ra);document.getElementById("rCR").textContent=fmt(cr);document.getElementById("rPrL").textContent=`Kâr (%${pr||0})`;document.getElementById("rPrV").textContent="+"+fmt(pa);const earn=pa+lp+gp;document.getElementById("rEaL").textContent="Kazanç";document.getElementById("rEaV").textContent=fmt(earn);document.getElementById("rTP").textContent=fmt(tp);const card=document.getElementById("resCard");card.classList.add("show");setTimeout(()=>card.scrollIntoView({behavior:"smooth",block:"start"}),100)}
+
+function resetAll(){S={ser:"",item:null,coat:null};document.querySelectorAll('input[type="number"]').forEach(el=>{el.value=el.id==="riskP"?"15":""});document.getElementById("matQ").value="";document.getElementById("coatQ").value="";document.getElementById("matPanel").classList.remove("open");document.getElementById("coatPanel").classList.remove("open");document.getElementById("resCard").classList.remove("show");updMat();updCoat();renSer();document.getElementById("diaSec").style.display="none";["cutPD","labD","grnD"].forEach(id=>document.getElementById(id).textContent="0,00 €");window.scrollTo({top:0,behavior:"smooth"})}
+
+window._c={cp:0,coP:0,lp:0,gp:0};renSer();updCoat();
+</script>
+</body>
+</html>
