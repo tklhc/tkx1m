@@ -267,6 +267,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
 <h2>FİYAT YÖNETİMİ</h2>
 <button class="admin-save" onclick="saveAdmin()">✓ Kaydet</button>
+<button class="admin-close" onclick="resetToFactory()" style="background:#f06060;color:#fff">↺ Fabrika Ayarı</button>
 <button class="admin-close" onclick="closeAdmin()">✕ Kapat</button>
 </div>
 <div class="admin-tabs" id="adminTabs"></div>
@@ -287,6 +288,33 @@ const AM=[];Object.entries(PDB).forEach(([k,s])=>s.i.forEach(it=>AM.push({...it,
 
 const PD=[3,4,5,6,8,10,12,14,16,18,20,25,28,32,36,40,50];
 const P120={PA:[.684,.741,.855,.912,1.311,1.482,1.653,1.995,2.508,3.078,3.534,4.902,5.358,7.98,14.25,23.94,48.165],PT:[.77,.834,.962,1.026,1.475,1.667,1.86,2.244,2.822,3.463,3.976,5.515,6.028,8.978,16.031,26.933,54.186],PAL:[.855,.926,1.069,1.14,1.639,1.853,2.066,2.494,3.135,3.848,4.418,6.128,6.698,9.975,17.813,29.925,60.206],"PTİT":[1.154,1.25,1.443,1.539,2.212,2.501,2.789,3.367,4.232,5.194,5.964,8.272,9.042,13.466,24.047,40.399,81.278],PAV:[1.09,1.181,1.363,1.454,2.089,2.362,2.634,3.18,3.997,4.906,5.632,7.813,8.539,12.718,22.711,38.154,76.763]};
+
+// === localStorage PERSISTENCE ===
+const LS_KEY="karbur_prices_v1";
+function savePricesToLS(){
+  const data={pdb:{},p120:{...P120},p200:{...P200},p250:{...P250},o:{}};
+  Object.keys(PDB).forEach(k=>{data.pdb[k]=PDB[k].i.map(it=>it.p)});
+  [1,2,3,4,5,6].forEach(g=>{data.o[g]={};OT.forEach(t=>{if(OTABLES[g][t])data.o[g][t]=[...OTABLES[g][t]]})});
+  try{localStorage.setItem(LS_KEY,JSON.stringify(data))}catch(e){}
+}
+function loadPricesFromLS(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);if(!raw)return;
+    const data=JSON.parse(raw);
+    if(data.pdb){Object.keys(data.pdb).forEach(k=>{if(PDB[k])data.pdb[k].forEach((p,i)=>{if(PDB[k].i[i])PDB[k].i[i].p=p})})}
+    if(data.p120){Object.keys(data.p120).forEach(t=>{if(P120[t])P120[t]=data.p120[t]})}
+    if(data.p200){Object.keys(data.p200).forEach(t=>{if(P200[t])P200[t]=data.p200[t]})}
+    if(data.p250){Object.keys(data.p250).forEach(t=>{if(P250[t])P250[t]=data.p250[t]})}
+    if(data.o){Object.keys(data.o).forEach(g=>{Object.keys(data.o[g]).forEach(t=>{if(OTABLES[g]&&OTABLES[g][t])OTABLES[g][t]=data.o[g][t]})})}
+    AM.length=0;Object.entries(PDB).forEach(([k,s])=>s.i.forEach(it=>AM.push({...it,sk:k,sl:s.l})));
+    rebuildAC();
+  }catch(e){}
+}
+function resetToFactory(){
+  if(!confirm("Tüm fiyatlar orijinal fabrika değerlerine dönecek. Emin misiniz?"))return;
+  try{localStorage.removeItem(LS_KEY)}catch(e){}
+  location.reload();
+}
 const P200={PA:[.855,.928,1.069,1.14,1.639,1.853,2.066,2.494,3.135,3.848,4.418,6.128,6.698,9.975,17.813,29.925,50.206],PT:[.962,1.044,1.202,1.283,1.844,2.084,2.325,2.805,3.527,4.328,4.97,6.893,7.535,11.222,20.039,33.666,57.732],PAL:[1.069,1.16,1.336,1.425,2.048,2.316,2.583,3.117,3.919,4.809,5.522,7.659,8.372,12.469,22.266,37.406,75.258],"PTİT":[1.443,1.565,1.804,1.924,2.765,3.126,3.487,4.208,5.29,6.493,7.455,10.34,11.302,16.833,30.059,50.498,101.598],PAV:[1.363,1.478,1.703,1.817,2.612,2.952,3.293,3.974,4.996,6.132,7.04,9.766,10.574,15.898,28.389,47.693,95.964]};
 const P250={PA:[1.154,1.252,1.443,1.539,2.212,2.501,2.789,3.367,4.232,5.194,5.964,8.272,9.042,13.466,24.047,40.399,81.278],PT:[1.299,1.409,1.623,1.731,2.489,2.813,3.138,3.787,4.761,5.843,6.709,9.306,10.172,15.15,27.053,45.449,91.438],PAL:[1.443,1.565,1.804,1.924,2.765,3.126,3.487,4.208,5.29,6.493,7.455,10.34,11.302,16.833,30.059,50.498,101.598],"PTİT":[1.948,2.113,2.435,2.597,3.713,4.22,4.707,5.681,7.142,8.765,10.064,13.959,15.258,22.724,40.579,68.173,137.157],PAV:[1.84,1.996,2.299,2.453,3.526,3.986,4.446,5.365,6.745,8.278,9.505,13.184,14.41,21.462,38.325,64.388,129.538]};
 
@@ -334,10 +362,10 @@ function showRes(){calc();const{cp,coP,lp,gp}=window._c;const tc=cp+coP+lp+gp,rk
 
 function resetAll(){S={ser:"",item:null,coat:null};document.querySelectorAll('input[type="number"]').forEach(el=>{if(el.id==="riskP")el.value="15";else if(el.id==="profP")el.value="20";else el.value=""});document.getElementById("matQ").value="";document.getElementById("coatQ").value="";document.getElementById("matPanel").classList.remove("open");document.getElementById("coatPanel").classList.remove("open");document.getElementById("resCard").classList.remove("show");updMat();updCoat();renSer();document.getElementById("diaSec").style.display="none";["cutPD","labD","grnD"].forEach(id=>document.getElementById(id).textContent="0,00 €");window.scrollTo({top:0,behavior:"smooth"})}
 
-window._c={cp:0,coP:0,lp:0,gp:0};renSer();updCoat();
+window._c={cp:0,coP:0,lp:0,gp:0};loadPricesFromLS();renSer();updCoat();
 
 // ===== ADMIN PANEL =====
-const ADMIN_PW="taha123";
+const ADMIN_PW="karbur2024";
 let adminTab="E";
 
 function showLogin(){document.getElementById("loginOverlay").classList.add("show");document.getElementById("loginPw").value="";document.getElementById("loginErr").style.display="none";setTimeout(()=>document.getElementById("loginPw").focus(),100)}
@@ -406,6 +434,7 @@ function saveAdmin(){
   // Rebuild flat arrays
   rebuildAC();
   AM.length=0;Object.entries(PDB).forEach(([k,s])=>s.i.forEach(it=>AM.push({...it,sk:k,sl:s.l})));
+  savePricesToLS();
   const msg=document.getElementById("adminMsg");msg.style.display="block";setTimeout(()=>msg.style.display="none",2000);
 }
 
@@ -415,7 +444,7 @@ function applyBulk(ser){
   const mult=1+(pct/100);
   PDB[ser].i.forEach(it=>{if(it.p!=null)it.p=Math.round(it.p*mult*100)/100});
   AM.length=0;Object.entries(PDB).forEach(([k,s])=>s.i.forEach(it=>AM.push({...it,sk:k,sl:s.l})));
-  rebuildAC();renderAdminContent();
+  rebuildAC();savePricesToLS();renderAdminContent();
   const msg=document.getElementById("adminMsg");msg.textContent=`✓ ${ser} serisi %${pct} güncellendi!`;msg.style.display="block";setTimeout(()=>msg.style.display="none",2500);
 }
 
@@ -433,7 +462,7 @@ function applyBulkCoat(tab){
     const tbl=tblMap[tab];
     Object.keys(tbl).forEach(t=>{tbl[t]=tbl[t].map(v=>v!=null?Math.round(v*mult*1000)/1000:v)});
   }
-  rebuildAC();renderAdminContent();
+  rebuildAC();savePricesToLS();renderAdminContent();
   const msg=document.getElementById("adminMsg");msg.textContent=`✓ ${tab} kaplama %${pct} güncellendi!`;msg.style.display="block";setTimeout(()=>msg.style.display="none",2500);
 }
 
