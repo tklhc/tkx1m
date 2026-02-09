@@ -115,13 +115,56 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .total-box{margin:16px -20px 0;padding:20px;text-align:center;border-radius:0 0 16px 16px;background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(245,158,11,0.04));border-top:1px solid rgba(251,191,36,0.15)}
 .total-label{font-size:11px;color:var(--gold);letter-spacing:0.12em;font-weight:600;font-family:var(--mono);margin-bottom:6px;opacity:0.7}
 .total-value{font-size:32px;font-weight:700;color:var(--gold);font-family:var(--mono);text-shadow:0 0 30px rgba(251,191,36,0.3)}
+.admin-toggle{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0}
+.admin-toggle:active{transform:scale(0.9)}
+/* LOGIN OVERLAY */
+.login-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.login-overlay.show{display:flex}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px 28px;width:90%;max-width:340px;text-align:center}
+.login-box h2{font-family:var(--mono);font-size:16px;color:var(--gold);margin-bottom:6px}
+.login-box p{font-size:12px;color:var(--muted);margin-bottom:20px}
+.login-box input{width:100%;padding:12px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-family:var(--mono);outline:none;text-align:center;letter-spacing:0.2em;margin-bottom:14px}
+.login-box input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(251,191,36,0.1)}
+.login-err{font-size:12px;color:#f06060;margin-bottom:10px;display:none}
+.login-btns{display:flex;gap:10px}
+.login-btns button{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:var(--mono)}
+.login-cancel{background:var(--border);color:var(--dim)}
+.login-enter{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0a0e17}
+/* ADMIN PANEL */
+.admin-overlay{position:fixed;inset:0;background:var(--bg);z-index:999;display:none;flex-direction:column;overflow:hidden}
+.admin-overlay.show{display:flex}
+.admin-bar{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0}
+.admin-bar h2{font-family:var(--mono);font-size:14px;color:var(--gold);letter-spacing:0.08em;flex:1}
+.admin-bar button{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--mono)}
+.admin-save{background:var(--green);color:#0a0e17}
+.admin-close{background:var(--border);color:var(--dim)}
+.admin-tabs{display:flex;gap:0;background:var(--card);border-bottom:1px solid var(--border);padding:0 16px;flex-shrink:0;overflow-x:auto}
+.admin-tab{padding:10px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-family:var(--mono);white-space:nowrap;transition:all 0.15s}
+.admin-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.admin-tab.coat{color:var(--pink);border-bottom-color:var(--pink)}
+.admin-tab.coat-o{color:var(--orange);border-bottom-color:var(--orange)}
+.admin-content{flex:1;overflow:auto;padding:16px}
+.admin-content::-webkit-scrollbar{width:4px}
+.admin-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.admin-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+.admin-table th{position:sticky;top:0;background:var(--card);color:var(--muted);font-size:10px;font-weight:700;letter-spacing:0.06em;padding:8px 6px;text-align:left;border-bottom:1px solid var(--border);z-index:1}
+.admin-table td{padding:4px 4px;border-bottom:1px solid rgba(30,36,51,0.3)}
+.admin-table tr:hover{background:rgba(251,191,36,0.03)}
+.admin-table .code-cell{color:var(--gold);font-weight:600;font-size:11px;white-space:nowrap}
+.admin-table .code-cell.p{color:var(--pink)}
+.admin-table .code-cell.o{color:var(--orange)}
+.admin-table input{width:80px;padding:5px 6px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;text-align:right}
+.admin-table input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(251,191,36,0.1)}
+.admin-table input.changed{border-color:var(--green);background:rgba(52,211,153,0.05)}
+.admin-msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 24px;border-radius:10px;background:var(--green);color:#0a0e17;font-family:var(--mono);font-size:13px;font-weight:600;z-index:1100;display:none;box-shadow:0 4px 20px rgba(61,214,165,0.3)}
 </style>
 </head>
 <body>
 <div class="app">
 <div class="header"><div class="header-row">
 <div class="logo-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2L4 8v12l10 6 10-6V8L14 2z" stroke="#fbbf24" stroke-width="1.5" fill="none"/><path d="M14 6l-6 3.5v7L14 20l6-3.5v-7L14 6z" fill="#fbbf24" opacity="0.2"/><circle cx="14" cy="13" r="3" fill="#fbbf24"/></svg></div>
-<div><h1>KARBÜR MALİYET</h1><p>Kesici Takım Hesaplayıcı</p></div>
+<div style="flex:1"><h1>KARBÜR MALİYET</h1><p>Kesici Takım Hesaplayıcı</p></div>
+<div class="admin-toggle" onclick="showLogin()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg></div>
 </div></div>
 <div class="form-body">
 
@@ -197,6 +240,33 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 </div>
 </div></div>
 
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+<div class="login-box">
+<h2>🔐 YÖNETİCİ GİRİŞİ</h2>
+<p>Fiyat düzenleme paneline erişmek için şifrenizi girin</p>
+<input type="password" id="loginPw" placeholder="••••••••" onkeydown="if(event.key==='Enter')tryLogin()">
+<div class="login-err" id="loginErr">Şifre yanlış!</div>
+<div class="login-btns">
+<button class="login-cancel" onclick="hideLogin()">İptal</button>
+<button class="login-enter" onclick="tryLogin()">Giriş</button>
+</div>
+</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-overlay" id="adminOverlay">
+<div class="admin-bar">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+<h2>FİYAT YÖNETİMİ</h2>
+<button class="admin-save" onclick="saveAdmin()">✓ Kaydet</button>
+<button class="admin-close" onclick="closeAdmin()">✕ Kapat</button>
+</div>
+<div class="admin-tabs" id="adminTabs"></div>
+<div class="admin-content" id="adminContent"></div>
+</div>
+<div class="admin-msg" id="adminMsg">✓ Fiyatlar güncellendi!</div>
+
 <script>
 const HL=30,HG=15,FL=330;
 const PDB={
@@ -258,7 +328,91 @@ function showRes(){calc();const{cp,coP,lp,gp}=window._c;const tc=cp+coP+lp+gp,rk
 function resetAll(){S={ser:"",item:null,coat:null};document.querySelectorAll('input[type="number"]').forEach(el=>{if(el.id==="riskP")el.value="15";else if(el.id==="profP")el.value="20";else el.value=""});document.getElementById("matQ").value="";document.getElementById("coatQ").value="";document.getElementById("matPanel").classList.remove("open");document.getElementById("coatPanel").classList.remove("open");document.getElementById("resCard").classList.remove("show");updMat();updCoat();renSer();document.getElementById("diaSec").style.display="none";["cutPD","labD","grnD"].forEach(id=>document.getElementById(id).textContent="0,00 €");window.scrollTo({top:0,behavior:"smooth"})}
 
 window._c={cp:0,coP:0,lp:0,gp:0};renSer();updCoat();
+
+// ===== ADMIN PANEL =====
+const ADMIN_PW="karbur2026";
+let adminTab="E";
+
+function showLogin(){document.getElementById("loginOverlay").classList.add("show");document.getElementById("loginPw").value="";document.getElementById("loginErr").style.display="none";setTimeout(()=>document.getElementById("loginPw").focus(),100)}
+function hideLogin(){document.getElementById("loginOverlay").classList.remove("show")}
+function tryLogin(){const pw=document.getElementById("loginPw").value;if(pw===ADMIN_PW){hideLogin();openAdmin()}else{document.getElementById("loginErr").style.display="block";document.getElementById("loginPw").value="";document.getElementById("loginPw").focus()}}
+
+function openAdmin(){document.getElementById("adminOverlay").classList.add("show");renderAdminTabs();renderAdminContent()}
+function closeAdmin(){document.getElementById("adminOverlay").classList.remove("show");rebuildAC();if(S.item){const it=PDB[S.ser]?.i.find(x=>x.c===S.item.c);if(it)S.item.p=it.p;updMat()}if(S.coat){const found=AC.find(c=>c.code===S.coat.code&&c.firm===S.coat.firm);if(found)S.coat.price=found.price;updCoat()}calc()}
+
+function renderAdminTabs(){
+  const tabs=["E","EU","ES","EG","EGP","P120","P200","P250","O50","O51","O76","O101","O151","O201"];
+  const labels={"E":"E","EU":"EU","ES":"ES","EG":"EG","EGP":"EGP","P120":"P·120","P200":"P·200","P250":"P·250","O50":"O·50","O51":"O·51-75","O76":"O·76-100","O101":"O·101-150","O151":"O·151-200","O201":"O·201-300"};
+  document.getElementById("adminTabs").innerHTML=tabs.map(t=>{
+    let cls=adminTab===t?"admin-tab active":"admin-tab";
+    if(t.startsWith("P")&&t!=="P120"||t==="P120")cls+=" ";
+    return `<div class="${cls}" onclick="adminTab='${t}';renderAdminTabs();renderAdminContent()">${labels[t]}</div>`;
+  }).join("");
+}
+
+function renderAdminContent(){
+  const c=document.getElementById("adminContent");
+  if(["E","EU","ES","EG","EGP"].includes(adminTab)){
+    const items=PDB[adminTab].i;
+    c.innerHTML=`<table class="admin-table"><thead><tr><th>Kod</th><th>Çap</th><th>Fiyat (€)</th></tr></thead><tbody>`+
+    items.map((it,i)=>`<tr><td class="code-cell">${it.c}</td><td style="color:var(--muted)">${it.c.replace(/[A-Z]+/g,"")}</td><td><input type="number" step="0.01" value="${it.p||""}" data-db="mat" data-ser="${adminTab}" data-idx="${i}" onchange="markChanged(this)"></td></tr>`).join("")+
+    `</tbody></table>`;
+  } else {
+    // Coating tables
+    const isO=adminTab.startsWith("O");
+    if(isO){
+      const gNum={"O50":1,"O51":2,"O76":3,"O101":4,"O151":5,"O201":6}[adminTab];
+      const tbl=OTABLES[gNum];
+      c.innerHTML=`<table class="admin-table"><thead><tr><th>Tip</th><th>Çap</th>`+OD.map(d=>`<th>Ø${d}</th>`).join("")+`</tr></thead><tbody>`+
+      OT.map(t=>
+        `<tr><td class="code-cell o">${t}</td><td></td>`+OD.map((d,i)=>
+          `<td><input type="number" step="0.01" value="${tbl[t]?.[i]||""}" data-db="ocoat" data-tbl="${adminTab}" data-type="${t}" data-idx="${i}" onchange="markChanged(this)" style="width:65px;font-size:11px"></td>`
+        ).join("")+`</tr>`
+      ).join("")+`</tbody></table>`;
+    } else {
+      const tblMap={"P120":P120,"P200":P200,"P250":P250};
+      const tbl=tblMap[adminTab];
+      const types=Object.keys(tbl);
+      c.innerHTML=`<table class="admin-table"><thead><tr><th>Tip</th>`+PD.map(d=>`<th>Ø${d}</th>`).join("")+`</tr></thead><tbody>`+
+      types.map(t=>
+        `<tr><td class="code-cell p">${t}</td>`+PD.map((d,i)=>
+          `<td><input type="number" step="0.001" value="${tbl[t]?.[i]||""}" data-db="pcoat" data-tbl="${adminTab}" data-type="${t}" data-idx="${i}" onchange="markChanged(this)" style="width:65px;font-size:11px"></td>`
+        ).join("")+`</tr>`
+      ).join("")+`</tbody></table>`;
+    }
+  }
+}
+
+function markChanged(el){el.classList.add("changed")}
+
+function saveAdmin(){
+  document.querySelectorAll("#adminContent input.changed").forEach(inp=>{
+    const v=parseFloat(inp.value);if(isNaN(v))return;
+    const db=inp.dataset.db;
+    if(db==="mat"){
+      const ser=inp.dataset.ser,idx=parseInt(inp.dataset.idx);
+      PDB[ser].i[idx].p=v;
+    } else if(db==="pcoat"){
+      const tblMap={"P120":P120,"P200":P200,"P250":P250};
+      const tbl=tblMap[inp.dataset.tbl];
+      tbl[inp.dataset.type][parseInt(inp.dataset.idx)]=v;
+    } else if(db==="ocoat"){
+      const gNum={"O50":1,"O51":2,"O76":3,"O101":4,"O151":5,"O201":6}[inp.dataset.tbl];
+      OTABLES[gNum][inp.dataset.type][parseInt(inp.dataset.idx)]=v;
+    }
+    inp.classList.remove("changed");
+  });
+  // Rebuild flat arrays
+  rebuildAC();
+  AM.length=0;Object.entries(PDB).forEach(([k,s])=>s.i.forEach(it=>AM.push({...it,sk:k,sl:s.l})));
+  const msg=document.getElementById("adminMsg");msg.style.display="block";setTimeout(()=>msg.style.display="none",2000);
+}
+
+function rebuildAC(){
+  AC.length=0;
+  ["PA","PT","PAL","PTİT","PAV"].forEach(t=>{PD.forEach((d,i)=>{[{s:"",l:120},{s:"-2",l:200},{s:"-3",l:250}].forEach(({s,l})=>{const tb=l===120?P120:l===200?P200:P250;if(tb[t]&&tb[t][i]!=null)AC.push({code:t+d+s,type:t,dia:d,len:l+"mm",price:tb[t][i],firm:"P"})})})});
+  OT.forEach(t=>{OD.forEach((d,i)=>{[1,2,3,4,5,6].forEach(g=>{const tb=OTABLES[g];if(tb[t]&&tb[t][i]!=null)AC.push({code:"O"+t+d+"-"+g,type:t,dia:d,len:OLENS[g],price:tb[t][i],firm:"O"})})})});
+}
 </script>
 </body>
 </html>
-
