@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#0a0e17">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Karb%C3%BCr%20Maliyet%20Hesaplay%C4%B1c%C4%B1%22%2C%22short_name%22%3A%22Karb%C3%BCr%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0e17%22%2C%22theme_color%22%3A%22%230a0e17%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%25200%2520192%2520192%27%253E%253Crect%2520width%3D%27192%27%2520height%3D%27192%27%2520rx%3D%2732%27%2520fill%3D%27%25230a0e17%27%2F%253E%253Cpath%2520d%3D%27M96%252030L46%252058v76l50%252028%252050-28V58L96%252030z%27%2520stroke%3D%27%2523fbbf24%27%2520stroke-width%3D%274%27%2520fill%3D%27none%27%2F%253E%253Ccircle%2520cx%3D%2796%27%2520cy%3D%2792%27%2520r%3D%2716%27%2520fill%3D%27%2523fbbf24%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
 <title>Karbür Maliyet Hesaplayıcı</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
 <script>
 if('serviceWorker' in navigator){
   const swCode=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))));`;
@@ -507,65 +508,53 @@ function removeQI(i){quoteItems.splice(i,1);updQuoteFab();renderQuoteItems()}
 function updQI(i,v){quoteItems[i].qty=Math.max(1,parseInt(v)||1);renderQuoteItems()}
 function fmtQ(v){return v.toFixed(2).replace(".",",")+" €"}
 function getNotesText(){const v=document.getElementById("qNot").value;return v.trim()||DEFAULT_NOTES}
-function buildQuoteHTML(){
-  const musteri=document.getElementById("qMusteri").value||"—";
+function buildQuoteEl(){
+  const musteri=document.getElementById("qMusteri").value||"\u2014";
   const tarih=document.getElementById("qTarih").value||getTodayStr();
   const no=document.getElementById("qNo").value||genQuoteNo();
   const not_=getNotesText();
   const total=quoteItems.reduce((a,it)=>a+it.price*it.qty,0);
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Tahoma,Geneva,sans-serif;color:#333;background:#fff}
-.page{max-width:794px;margin:0 auto}
-.hdr{background:linear-gradient(135deg,#1565c0,#1976d2);padding:20px 36px;display:flex;align-items:center;justify-content:space-between}
-.hdr-left{display:flex;align-items:center;gap:14px}
-.hdr-left img{height:50px;border-radius:6px}
-.hdr-title{color:#fff;font-size:20px;font-weight:700;letter-spacing:0.02em}
-.hdr-sub{color:rgba(255,255,255,0.8);font-size:11px;margin-top:2px}
-.hdr-right{color:rgba(255,255,255,0.9);font-size:12px;text-align:right}
-.accent-bar{height:4px;background:linear-gradient(90deg,#ffa000,#ffca28,#ffa000)}
-.body{padding:28px 36px}
-.title-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
-.doc-title{font-size:26px;font-weight:700;color:#1565c0;letter-spacing:0.03em}
-.doc-meta{text-align:right;font-size:12px;color:#555;line-height:1.8}
-.doc-meta b{color:#1565c0}
-.client-box{background:#f0f4fa;border-radius:8px;padding:14px 20px;margin-bottom:24px;border-left:4px solid #1565c0}
-.client-box span{font-size:13px;color:#555}
-.client-box b{color:#1a1a2e}
-table{width:100%;border-collapse:collapse;margin-bottom:0;font-size:13px}
-thead tr{background:#1565c0}
-th{color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:12px;letter-spacing:0.04em}
-th:first-child{width:40px;text-align:center;border-radius:6px 0 0 0}
-th:last-child{border-radius:0 6px 0 0}
-th.r{text-align:right}
-td{padding:10px 14px;border-bottom:1px solid #e8eaed}
-td:first-child{text-align:center;color:#888;font-weight:600}
-td.r{text-align:right;font-family:'Courier New',monospace}
-td.rb{text-align:right;font-family:'Courier New',monospace;font-weight:700}
-tr:nth-child(even){background:#fafbfc}
-.total-bar{background:#1565c0;border-radius:0 0 6px 6px;padding:14px 14px;display:flex;justify-content:flex-end;align-items:center;gap:40px;margin-bottom:28px}
-.total-bar span{color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;letter-spacing:0.06em}
-.total-bar b{color:#fff;font-size:22px;font-weight:800;font-family:'Courier New',monospace}
-.notes-box{border:1px solid #e0e0e0;border-radius:8px;padding:16px 20px;margin-bottom:28px}
-.notes-title{font-size:12px;font-weight:700;color:#1565c0;margin-bottom:8px;letter-spacing:0.04em}
-.notes-text{font-size:12px;color:#555;line-height:1.7;white-space:pre-line}
-.footer{border-top:2px solid #1565c0;padding:12px 36px;text-align:center;font-size:11px;color:#888;letter-spacing:0.02em}
-@media print{body{padding:0}.page{max-width:100%}}
-</style></head><body><div class="page">
-<div class="hdr"><div class="hdr-left"><img src="${LOGO_B64}" alt="Mihenk"><div><div class="hdr-title">MİHENK KESİCİ TAKIMLAR</div><div class="hdr-sub">SAN. TİC. LTD. ŞTİ.</div></div></div><div class="hdr-right">Tel: 0507 321 62 80</div></div>
-<div class="accent-bar"></div>
-<div class="body">
-<div class="title-row"><div class="doc-title">FİYAT TEKLİFİ</div><div class="doc-meta"><b>Teklif No:</b> ${no}<br><b>Tarih:</b> ${tarih}</div></div>
-<div class="client-box"><span>Müşteri: </span><b>${musteri}</b></div>
-<table><thead><tr><th>No</th><th>Ürün Açıklaması</th><th class="r">Adet</th><th class="r">Birim Fiyat</th><th class="r">Toplam</th></tr></thead><tbody>
-${quoteItems.map((it,i)=>{const label=[it.name,it.desc].filter(Boolean).join(" — ");return `<tr><td>${i+1}</td><td>${label||"—"}</td><td class="r">${it.qty}</td><td class="r">${fmtQ(it.price)}</td><td class="rb">${fmtQ(it.price*it.qty)}</td></tr>`}).join("")}
-</tbody></table>
-<div class="total-bar"><span>GENEL TOPLAM:</span><b>${fmtQ(total)}</b></div>
-<div class="notes-box"><div class="notes-title">NOTLAR</div><div class="notes-text">${not_.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div></div>
-</div>
-<div class="footer">MİHENK KESİCİ TAKIMLAR SAN. TİC. LTD. ŞTİ.</div>
-</div></body></html>`;
+  let rows="";
+  quoteItems.forEach((it,i)=>{
+    const label=[it.name,it.desc].filter(Boolean).join(" \u2014 ")||"\u2014";
+    rows+='<tr style="background:'+(i%2===0?"#f8f9fa":"#fff")+'"><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;text-align:center;font-size:11px;color:#888;font-weight:600">'+(i+1)+'</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;font-size:11px;font-weight:600">'+label+'</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;text-align:center;font-size:11px">'+it.qty+'</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;text-align:right;font-size:11px;font-family:Courier New,monospace">'+fmtQ(it.price)+'</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;text-align:right;font-size:11px;font-family:Courier New,monospace;font-weight:700">'+fmtQ(it.price*it.qty)+'</td></tr>';
+  });
+  const el=document.createElement("div");
+  el.style.cssText="width:210mm;font-family:Segoe UI,Tahoma,Helvetica,Arial,sans-serif;color:#333;background:#fff";
+  el.innerHTML=
+    '<div style="background:#1565C0;color:#fff;padding:20px 28px;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:14px"><img src="'+LOGO_B64+'" style="height:48px;border-radius:6px"><div><div style="font-size:18px;font-weight:700">M\u0130HENK KES\u0130C\u0130 TAKIMLAR</div><div style="font-size:10px;opacity:.8;margin-top:2px">SAN. T\u0130C. LTD. \u015ET\u0130.</div></div></div><div style="text-align:right;font-size:11px;opacity:.85">Tel: 0507 321 62 80</div></div>'+
+    '<div style="height:3px;background:linear-gradient(90deg,#FFA000,#FFCA28,#FFA000)"></div>'+
+    '<div style="padding:24px 28px">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:20px"><div style="color:#0D47A1;font-size:24px;font-weight:700">F\u0130YAT TEKL\u0130F\u0130</div><div style="font-size:12px;color:#666;text-align:right;line-height:1.8"><b style="color:#1565C0">Teklif No:</b> '+no+'<br><b style="color:#1565C0">Tarih:</b> '+tarih+'</div></div>'+
+      '<div style="background:#E3F2FD;padding:12px 18px;border-radius:6px;border-left:4px solid #1565C0;margin-bottom:22px"><span style="font-size:10px;color:#1565C0;display:block;margin-bottom:2px">M\u00DC\u015ETER\u0130</span><b style="font-size:14px;color:#1a1a2e">'+musteri+'</b></div>'+
+      '<table style="width:100%;border-collapse:collapse"><thead><tr>'+
+        '<th style="background:#0D47A1;color:#fff;padding:10px 12px;font-size:11px;font-weight:600;width:40px;text-align:center;border-radius:6px 0 0 0">No</th>'+
+        '<th style="background:#0D47A1;color:#fff;padding:10px 12px;font-size:11px;font-weight:600;text-align:left">\u00DCr\u00fcn A\u00e7\u0131klamas\u0131</th>'+
+        '<th style="background:#0D47A1;color:#fff;padding:10px 12px;font-size:11px;font-weight:600;width:50px;text-align:center">Adet</th>'+
+        '<th style="background:#0D47A1;color:#fff;padding:10px 12px;font-size:11px;font-weight:600;width:90px;text-align:right">Birim Fiyat</th>'+
+        '<th style="background:#0D47A1;color:#fff;padding:10px 12px;font-size:11px;font-weight:600;width:90px;text-align:right;border-radius:0 6px 0 0">Toplam</th>'+
+      '</tr></thead><tbody>'+rows+
+      '<tr><td colspan="5" style="padding:6px"></td></tr>'+
+      '<tr><td colspan="4" style="background:#1565C0;color:#fff;padding:12px 15px;font-size:14px;font-weight:700;text-align:right;border-radius:6px 0 0 6px">GENEL TOPLAM:</td>'+
+      '<td style="background:#1565C0;color:#fff;padding:12px 15px;font-size:14px;font-weight:700;text-align:right;border-radius:0 6px 6px 0">'+fmtQ(total)+'</td></tr>'+
+      '</tbody></table>'+
+      '<div style="background:#E3F2FD;padding:14px 18px;border-radius:6px;margin-top:22px;font-size:10px;line-height:1.8"><b style="color:#1565C0;font-size:11px">NOTLAR</b><br>'+not_.replace(/\n/g,"<br>")+'</div>'+
+    '</div>'+
+    '<div style="background:#1565C0;color:#fff;text-align:center;padding:8px;font-size:9px;margin-top:30px">M\u0130HENK KES\u0130C\u0130 TAKIMLAR SAN. T\u0130C. LTD. \u015ET\u0130.</div>';
+  return {el,no,total};
 }
+function buildQuoteHTML(){
+  const {el}=buildQuoteEl();
+  return "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;font-family:Segoe UI,Tahoma,sans-serif;background:#fff\">"+el.outerHTML+"</body></html>";
+}
+async function generatePDF(){
+  const {el,no}=buildQuoteEl();
+  const fname="Teklif_"+no.replace(/\s+/g,"_")+".pdf";
+  const opt={margin:0,filename:fname,image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,letterRendering:true},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}};
+  const blob=await html2pdf().set(opt).from(el).outputPdf("blob");
+  return {blob,filename:fname};
+}
+
 function printQuote(){
   if(!quoteItems.length){alert("Teklife ürün ekleyin!");return}
   const w=window.open("","_blank","width=800,height=700");
@@ -575,13 +564,14 @@ function printQuote(){
 }
 function downloadQuote(){
   if(!quoteItems.length){alert("Teklife ürün ekleyin!");return}
-  const html=buildQuoteHTML();
-  const blob=new Blob([html],{type:"text/html"});
-  const a=document.createElement("a");
-  const no=document.getElementById("qNo").value||genQuoteNo();
-  a.href=URL.createObjectURL(blob);
-  a.download="Teklif_"+no.replace(/\s+/g,"_")+".html";
-  a.click();URL.revokeObjectURL(a.href);
+  const btn=event.target.closest("button");if(btn)btn.textContent="⏳ PDF...";
+  generatePDF().then(({blob,filename})=>{
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=filename;
+    a.click();URL.revokeObjectURL(a.href);
+    if(btn)btn.textContent="⬇";
+  }).catch(e=>{console.error(e);if(btn)btn.textContent="⬇";alert("PDF oluşturulamadı")});
 }
 function shareQuote(method){
   if(!quoteItems.length){alert("Teklife ürün ekleyin!");return}
@@ -590,18 +580,24 @@ function shareQuote(method){
   const no=document.getElementById("qNo").value||genQuoteNo();
   const total=quoteItems.reduce((a,it)=>a+it.price*it.qty,0);
   if(method==="whatsapp"){
-    // Generate PDF via print dialog then share text
-    const w=window.open("","_blank","width=800,height=700");
-    w.document.write(buildQuoteHTML()+'<scr'+'ipt>setTimeout(function(){window.print()},400);</scr'+'ipt>');
-    w.document.close();
-    setTimeout(()=>{
-      let text="*MİHENK KESİCİ TAKIMLAR*\n📋 FİYAT TEKLİFİ — "+no+"\n📅 "+tarih+"\n";
-      if(musteri)text+="👤 "+musteri+"\n";
-      text+="━━━━━━━━━━━━━\n";
-      quoteItems.forEach((it,i)=>{const lbl=[it.name,it.desc].filter(Boolean).join(" — ")||"Ürün";text+=`${i+1}. ${lbl}\n   ${it.qty} ad × ${fmtQ(it.price)} = *${fmtQ(it.price*it.qty)}*\n`});
-      text+="━━━━━━━━━━━━━\n💰 *TOPLAM: "+fmtQ(total)+"*\n\n_Teklif dosyası PDF olarak kaydedildi, WhatsApp'a ekleyiniz._";
-      window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");
-    },1000);
+    const btn=event.target.closest("button");if(btn)btn.innerHTML="⏳ PDF...";
+    generatePDF().then(({blob,filename})=>{
+      if(btn)btn.innerHTML="📱 WhatsApp";
+      const file=new File([blob],filename,{type:"application/pdf"});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:"Mihenk Fiyat Teklifi",text:"Fiyat Teklifi — "+no}).catch(()=>{});
+      } else {
+        const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+        setTimeout(()=>{
+          let text="*MİHENK KESİCİ TAKIMLAR*\n📋 FİYAT TEKLİFİ — "+no+"\n📅 "+tarih+"\n";
+          if(musteri)text+="👤 "+musteri+"\n";
+          text+="━━━━━━━━━━━━━\n";
+          quoteItems.forEach((it,i)=>{const lbl=[it.name,it.desc].filter(Boolean).join(" — ")||"Ürün";text+=`${i+1}. ${lbl}\n   ${it.qty} ad × ${fmtQ(it.price)} = *${fmtQ(it.price*it.qty)}*\n`});
+          text+="━━━━━━━━━━━━━\n💰 *TOPLAM: "+fmtQ(total)+"*\n\n_PDF teklif indirildi, WhatsApp'a ekleyiniz._";
+          window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");
+        },500);
+      }
+    }).catch(e=>{console.error(e);if(btn)btn.innerHTML="📱 WhatsApp"});
     return;
   }
   let text="MİHENK KESİCİ TAKIMLAR\nFİYAT TEKLİFİ — "+no+"\nTarih: "+tarih+"\n";
