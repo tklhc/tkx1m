@@ -362,6 +362,10 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-app
 .quote-empty{text-align:center;padding:60px 30px;color:var(--dark);font-size:14px}
 .qi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
 .qi-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.qi-order{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.qi-arrow{width:22px;height:18px;border:1px solid var(--border);background:var(--bg);color:var(--dim);font-size:10px;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;padding:0}
+.qi-arrow:disabled{opacity:0.3;cursor:default}
+.qi-arrow:not(:disabled):hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 .qi-name-input{flex:1;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-size:14px;font-family:var(--mono);font-weight:700;outline:none}
 .qi-name-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,183,49,0.08)}
 .qi-name-input::placeholder{color:var(--dark);font-weight:400}
@@ -376,6 +380,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-app
 .qi-field input{width:55px;padding:7px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:13px;font-family:var(--mono);outline:none;text-align:center}
 .qi-field input:focus{border-color:var(--purple)}
 .qi-price{font-family:var(--mono);font-size:13px;color:var(--dim)}
+.qi-price-input{width:80px;padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:13px;font-family:var(--mono);outline:none;text-align:right}
+.qi-price-input:focus{border-color:var(--accent)}
 .qi-total{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text);margin-left:auto}
 .quote-count{padding:4px 10px;border-radius:6px;background:rgba(139,141,247,0.1);border:1px solid rgba(139,141,247,0.2);font-family:var(--mono);font-size:12px;font-weight:600;color:var(--purple)}
 @media print{
@@ -761,12 +767,13 @@ function closeQuote(){document.getElementById("quoteOverlay").classList.remove("
 function renderQuoteItems(){
   const c=document.getElementById("quoteItems"),s=document.getElementById("quoteSummary");
   if(!quoteItems.length){c.innerHTML='<div class="quote-empty">Henüz ürün eklenmedi.<br>Hesaplama yapıp "Teklife Ekle" butonunu kullanın.</div>';s.style.display="none";return}
-  c.innerHTML=quoteItems.map((it,i)=>`<div class="qi"><div class="qi-top"><input type="text" class="qi-name-input" placeholder="Ürün adı yazın..." value="${it.name}" onchange="quoteItems[${i}].name=this.value"><button class="qi-del" onclick="removeQI(${i})">✕</button></div><div class="qi-desc"><input type="text" placeholder="Açıklama (opsiyonel)" value="${it.desc}" onchange="quoteItems[${i}].desc=this.value"></div><div class="qi-bottom"><div class="qi-field"><label>Adet:</label><input type="number" value="${it.qty}" min="1" onchange="updQI(${i},this.value)"></div><div class="qi-field"><label>Birim:</label><span class="qi-price">${fmtQ(it.price)}</span></div><span class="qi-total">${fmtQ(it.price*it.qty)}</span></div></div>`).join("");
+  c.innerHTML=quoteItems.map((it,i)=>`<div class="qi"><div class="qi-top"><div class="qi-order"><button class="qi-arrow" onclick="moveQI(${i},-1)" ${i===0?'disabled':''}>▲</button><button class="qi-arrow" onclick="moveQI(${i},1)" ${i===quoteItems.length-1?'disabled':''}>▼</button></div><input type="text" class="qi-name-input" placeholder="Ürün adı yazın..." value="${it.name}" onchange="quoteItems[${i}].name=this.value"><button class="qi-del" onclick="removeQI(${i})">✕</button></div><div class="qi-desc"><input type="text" placeholder="Açıklama (opsiyonel)" value="${it.desc}" onchange="quoteItems[${i}].desc=this.value"></div><div class="qi-bottom"><div class="qi-field"><label>Adet:</label><input type="number" value="${it.qty}" min="1" onchange="updQI(${i},'qty',this.value)"></div><div class="qi-field"><label>Birim:</label><input type="number" class="qi-price-input" value="${it.price}" step="0.01" min="0" onchange="updQI(${i},'price',this.value)"></div><span class="qi-total">${fmtQ(it.price*it.qty)}</span></div></div>`).join("");
   s.style.display="block";
   document.getElementById("quoteTotal").textContent=fmtQ(quoteItems.reduce((a,it)=>a+it.price*it.qty,0));
 }
 function removeQI(i){quoteItems.splice(i,1);updQuoteFab();renderQuoteItems()}
-function updQI(i,v){quoteItems[i].qty=Math.max(1,parseInt(v)||1);renderQuoteItems()}
+function updQI(i,field,v){if(field==='qty')quoteItems[i].qty=Math.max(1,parseInt(v)||1);else if(field==='price')quoteItems[i].price=Math.max(0,parseFloat(v)||0);renderQuoteItems()}
+function moveQI(from,dir){const to=from+dir;if(to<0||to>=quoteItems.length)return;const tmp=quoteItems[from];quoteItems[from]=quoteItems[to];quoteItems[to]=tmp;renderQuoteItems()}
 function fmtQ(v){return v.toFixed(2).replace(".",",")+" €"}
 function getNotesText(){const v=document.getElementById("qNot").value;return v.trim()||DEFAULT_NOTES}
 async function teklifPDF(paylas) {
