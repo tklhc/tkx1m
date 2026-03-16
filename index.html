@@ -649,6 +649,7 @@ E:{l:"E - Standart",i:[{c:"E2",p:null},{c:"E3",p:10.09},{c:"E4",p:16.82},{c:"E5"
 EU:{l:"EU",i:[{c:"EU3",p:10.09},{c:"EU4",p:17.06},{c:"EU5",p:26.67},{c:"EU6",p:36.72},{c:"EU8",p:64.55},{c:"EU10",p:99.89},{c:"EU12",p:140.19},{c:"EU14",p:189.74},{c:"EU16",p:252.85},{c:"EU18",p:316.65},{c:"EU20",p:388.37},{c:"EU22",p:464.34},{c:"EU25",p:596.30},{c:"EU30",p:838.93},{c:"EU32",p:977.08}]},
 ES:{l:"ES",i:[{c:"ES2",p:null},{c:"ES3",p:10.09},{c:"ES4",p:16.44},{c:"ES5",p:24.75},{c:"ES6",p:34.79},{c:"ES8",p:61.22},{c:"ES10",p:92.43},{c:"ES12",p:129.54},{c:"ES14",p:173.43},{c:"ES16",p:233.81},{c:"ES18",p:292.71},{c:"ES20",p:358.97},{c:"ES22",p:432.49},{c:"ES25",p:554.85},{c:"ES30",p:749.49},{c:"ES32",p:898.72}]},
 EG:{l:"EG",i:[{c:"EG2",p:7.79},{c:"EG3",p:9.21},{c:"EG4",p:12.71},{c:"EG5",p:19.27},{c:"EG6",p:27.07},{c:"EG8",p:46.96},{c:"EG10",p:66.48},{c:"EG12",p:99.86},{c:"EG14",p:133.90},{c:"EG16",p:177.92},{c:"EG18",p:221.89},{c:"EG20",p:272.52},{c:"EG22",p:327.88},{c:"EG25",p:423.53},{c:"EG30",p:596.51},{c:"EG32",p:678.67}]},
+Eİ:{l:"Eİ - 30° Helisel",i:[{c:"Eİ6",p:74.86},{c:"Eİ8",p:131.57},{c:"Eİ10",p:212.97},{c:"Eİ12",p:273.21},{c:"Eİ14",p:412.29},{c:"Eİ16",p:492.8},{c:"Eİ18",p:739.43},{c:"Eİ20",p:1130.97},{c:"Eİ22",p:1452.65},{c:"Eİ25",p:1763.14}]},
 EGP:{l:"EGP",i:[{c:"EGP3",p:1.15},{c:"EGP4",p:1.97},{c:"EGP5",p:2.95},{c:"EGP6",p:4.29},{c:"EGP8",p:8.89},{c:"EGP10",p:15.50},{c:"EGP12",p:25.35},{c:"EGP14",p:33.91},{c:"EGP1492",p:38.30},{c:"EGP16",p:49.70},{c:"EGP16150",p:64.46},{c:"EGP18",p:62.34},{c:"EGP20",p:86.74}]}
 };
 const AM=[];Object.entries(PDB).forEach(([k,s])=>s.i.forEach(it=>AM.push({...it,sk:k,sl:s.l})));
@@ -919,7 +920,7 @@ function renderAdminTabs(){
 
 function renderAdminContent(){
   const c=document.getElementById("adminContent");
-  if(["E","EU","ES","EG","EGP"].includes(adminTab)){
+  if(["E","EU","ES","EG","Eİ","EGP"].includes(adminTab)){
     const items=PDB[adminTab].i;
     c.innerHTML=`<div class="bulk-box"><div class="bulk-label">⚡ TOPLU ZAM — ${adminTab} Serisi</div><input type="number" id="bulkPct" placeholder="Ör: 20" class="bulk-input"><span class="bulk-suf">%</span><button class="bulk-btn" onclick="applyBulk('${adminTab}')">Uygula</button></div>`+
     `<table class="admin-table"><thead><tr><th>Kod</th><th>Çap</th><th>Fiyat (€)</th></tr></thead><tbody>`+
