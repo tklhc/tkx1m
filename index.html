@@ -722,7 +722,7 @@ OT.forEach(t=>{OD.forEach((d,i)=>{[1,2,3,4,5,6].forEach(g=>{const tb=OTABLES[g];
 const LS_KEY="karbur_prices_v1";
 function savePricesToLS(){
   const data={pdb:{},p120:{...P120},p200:{...P200},p250:{...P250},o:{}};
-  Object.keys(PDB).forEach(k=>{data.pdb[k]=PDB[k].i.map(it=>it.p)});
+  Object.keys(PDB).forEach(k=>{data.pdb[k]={l:PDB[k].l,custom:PDB[k].custom,items:PDB[k].i.map(it=>({c:it.c,p:it.p,el:it.el,custom:it.custom}))}});
   [1,2,3,4,5,6].forEach(g=>{data.o[g]={};OT.forEach(t=>{if(OTABLES[g][t])data.o[g][t]=[...OTABLES[g][t]]})});
   try{localStorage.setItem(LS_KEY,JSON.stringify(data))}catch(e){}
 }
@@ -730,7 +730,29 @@ function loadPricesFromLS(){
   try{
     const raw=localStorage.getItem(LS_KEY);if(!raw)return;
     const data=JSON.parse(raw);
-    if(data.pdb){Object.keys(data.pdb).forEach(k=>{if(PDB[k])data.pdb[k].forEach((p,i)=>{if(PDB[k].i[i])PDB[k].i[i].p=p})})}
+    if(data.pdb){Object.keys(data.pdb).forEach(k=>{
+      const savedSeries=data.pdb[k];
+      // format algıla: v1 = düz fiyat dizisi, v2 = {c,p,...} dizisi, v3 = {l,items:[...]}
+      let items, label=null, wasCustom=false;
+      if(Array.isArray(savedSeries)){items=savedSeries}
+      else{items=savedSeries.items||[];label=savedSeries.l;wasCustom=!!savedSeries.custom}
+      if(!PDB[k]){
+        if(!items.length)return; // seri de yok, veri de yok -> atla
+        PDB[k]={l:label||k,i:[],custom:true};
+      }
+      if(!items.length)return;
+      if(typeof items[0]==="number"){
+        // v1: sadece fiyat dizisi, sıra bazlı
+        items.forEach((p,i)=>{if(PDB[k].i[i])PDB[k].i[i].p=p});
+      }else{
+        // v2/v3: kod bazlı — mevcut kodu güncelle, yoksa (elle eklenen) ekle
+        items.forEach(sIt=>{
+          const existing=PDB[k].i.find(it=>it.c===sIt.c);
+          if(existing){existing.p=sIt.p;if(sIt.el)existing.el=sIt.el}
+          else PDB[k].i.push({c:sIt.c,p:sIt.p,el:sIt.el,custom:true});
+        });
+      }
+    })}
     if(data.p120){Object.keys(data.p120).forEach(t=>{if(P120[t])P120[t]=data.p120[t]})}
     if(data.p200){Object.keys(data.p200).forEach(t=>{if(P200[t])P200[t]=data.p200[t]})}
     if(data.p250){Object.keys(data.p250).forEach(t=>{if(P250[t])P250[t]=data.p250[t]})}
@@ -748,7 +770,7 @@ function resetToFactory(){
 let S={ser:"",item:null,coat:null};
 function fmt(v){if(isNaN(v)||v===0)return"0,00 €";return v.toFixed(2).replace(".",",")+" €"}
 function pn(id){const v=parseFloat(document.getElementById(id).value);return isNaN(v)?0:v}
-function gEL(){if(!S.item)return FL;if(S.item.c==="EGP1492")return 92;if(S.item.c==="EGP16150")return 150;return FL}
+function gEL(){if(!S.item)return FL;if(S.item.el)return S.item.el;if(S.item.c==="EGP1492")return 92;if(S.item.c==="EGP16150")return 150;return FL}
 
 let _mf=[];
 function searchMat(){const q=document.getElementById("matQ").value.toLowerCase().trim(),r=document.getElementById("matRes");if(!q){r.innerHTML="";return}_mf=AM.filter(i=>i.c.toLowerCase().includes(q)).slice(0,10);if(!_mf.length){r.innerHTML='<div class="sb-empty">Sonuç bulunamadı</div>';return}r.innerHTML=_mf.map((it,i)=>`<div class="sb-res-item" onclick="selMat(${i})"><div><span class="sb-res-code">${it.c}</span><div class="sb-res-meta">${it.sl}</div></div><span class="sb-res-price">${it.p?fmt(it.p):"—"}</span></div>`).join("")}
@@ -971,13 +993,14 @@ function openAdmin(){document.getElementById("adminOverlay").classList.add("show
 function closeAdmin(){document.getElementById("adminOverlay").classList.remove("show");rebuildAC();if(S.item){const it=PDB[S.ser]?.i.find(x=>x.c===S.item.c);if(it)S.item.p=it.p;updMat()}if(S.coat){const found=AC.find(c=>c.code===S.coat.code&&c.firm===S.coat.firm);if(found)S.coat.price=found.price;updCoat()}calc()}
 
 function renderAdminTabs(){
-  const matTabs=["E","EU","ES","EG","EGP"];
+  const matTabs=Object.keys(PDB);
   const pTabs=["P120","P200","P250"];
   const oTabs=["O50","O51","O76","O101","O151","O201"];
   const oLabels={"O50":"50mm","O51":"51-75mm","O76":"76-100mm","O101":"101-150mm","O151":"151-200mm","O201":"201-300mm"};
   const pLabels={"P120":"120mm","P200":"200mm","P250":"250mm"};
   let html=`<div class="admin-tab-group"><div class="admin-tab-group-label">HAMMADDE</div>`;
   matTabs.forEach(t=>{html+=`<div class="admin-tab-v ${adminTab===t?'active':''}" onclick="adminTab='${t}';renderAdminTabs();renderAdminContent()">${t}</div>`});
+  html+=`<div class="admin-tab-v ${adminTab==='__newSeries__'?'active':''}" style="color:var(--purple);font-weight:700" onclick="adminTab='__newSeries__';renderAdminTabs();renderAdminContent()">+ Yeni Seri</div>`;
   html+=`</div><div class="admin-tab-group"><div class="admin-tab-group-label">P FİRMA KAPLAMA</div>`;
   pTabs.forEach(t=>{html+=`<div class="admin-tab-v ${adminTab===t?'active':''}" onclick="adminTab='${t}';renderAdminTabs();renderAdminContent()">${pLabels[t]}</div>`});
   html+=`</div><div class="admin-tab-group"><div class="admin-tab-group-label">O FİRMA KAPLAMA</div>`;
@@ -988,11 +1011,23 @@ function renderAdminTabs(){
 
 function renderAdminContent(){
   const c=document.getElementById("adminContent");
-  if(["E","EU","ES","EG","Eİ","EGP"].includes(adminTab)){
+  if(adminTab==="__newSeries__"){
+    c.innerHTML=`<div class="bulk-box" style="flex-direction:column;align-items:flex-start;gap:12px">`+
+      `<div class="bulk-label">🆕 YENİ SERİ OLUŞTUR</div>`+
+      `<div style="display:flex;gap:12px;width:100%">`+
+        `<div style="flex:1"><div class="qi-label" style="margin-bottom:6px">SERİ KODU (ör: EX)</div><input type="text" id="newSerKey" class="bulk-input" style="width:100%;text-align:left;padding-left:12px"></div>`+
+        `<div style="flex:2"><div class="qi-label" style="margin-bottom:6px">AÇIKLAMA (opsiyonel)</div><input type="text" id="newSerLabel" class="bulk-input" style="width:100%;text-align:left;padding-left:12px" placeholder="Ör: EX - Yeni Karbür Serisi"></div>`+
+      `</div>`+
+      `<button class="bulk-btn" onclick="createNewSeries()">Seri Oluştur</button>`+
+    `</div>`;
+    return;
+  }
+  if(PDB[adminTab]){
     const items=PDB[adminTab].i;
     c.innerHTML=`<div class="bulk-box"><div class="bulk-label">⚡ TOPLU ZAM — ${adminTab} Serisi</div><input type="number" id="bulkPct" placeholder="Ör: 20" class="bulk-input"><span class="bulk-suf">%</span><button class="bulk-btn" onclick="applyBulk('${adminTab}')">Uygula</button></div>`+
-    `<table class="admin-table"><thead><tr><th>Kod</th><th>Çap</th><th>Fiyat (€)</th></tr></thead><tbody>`+
-    items.map((it,i)=>`<tr><td class="code-cell">${it.c}</td><td style="color:var(--muted)">${it.c.replace(/[A-Z]+/g,"")}</td><td><input type="number" step="0.01" value="${it.p!=null?it.p:""}" data-db="mat" data-ser="${adminTab}" data-idx="${i}" onchange="markChanged(this)"></td></tr>`).join("")+
+    `<div class="bulk-box"><div class="bulk-label">➕ YENİ KOD EKLE</div><input type="text" id="newMatCode" placeholder="Ör: ${adminTab}34" class="bulk-input" style="width:110px;text-align:left;padding-left:12px"><input type="number" id="newMatPrice" placeholder="Fiyat €" step="0.01" class="bulk-input" style="width:100px"><input type="number" id="newMatBoy" placeholder="Boy mm" value="330" class="bulk-input" style="width:90px"><button class="bulk-btn" onclick="addNewMatCode('${adminTab}')">Ekle</button></div>`+
+    `<table class="admin-table"><thead><tr><th>Kod</th><th>Çap</th><th>Boy</th><th>Fiyat (€)</th><th></th></tr></thead><tbody>`+
+    items.map((it,i)=>`<tr><td class="code-cell">${it.c}</td><td style="color:var(--muted)">${it.c.replace(/[A-Z]+/g,"")}</td><td style="color:var(--muted)">${it.el||330}mm</td><td><input type="number" step="0.01" value="${it.p!=null?it.p:""}" data-db="mat" data-ser="${adminTab}" data-idx="${i}" onchange="markChanged(this)"></td><td>${it.custom?`<button class="qi-del" style="width:26px;height:26px" onclick="removeMatCode('${adminTab}',${i})" title="Sil">✕</button>`:""}</td></tr>`).join("")+
     `</tbody></table>`;
   } else {
     const isO=adminTab.startsWith("O");
@@ -1015,6 +1050,49 @@ function renderPCoatTable(){
 }
 
 function markChanged(el){el.classList.add("changed")}
+
+function createNewSeries(){
+  const keyEl=document.getElementById("newSerKey"),labelEl=document.getElementById("newSerLabel");
+  const key=keyEl.value.trim().toUpperCase().replace(/\s+/g,"");
+  const label=labelEl.value.trim()||key;
+  if(!key){alert("Seri kodu girin!");return}
+  if(PDB[key]){alert("Bu seri kodu zaten mevcut: "+key);return}
+  PDB[key]={l:label,i:[],custom:true};
+  savePricesToLS();
+  adminTab=key;
+  renderAdminTabs();
+  renderAdminContent();
+  renSer();
+  const msg=document.getElementById("adminMsg");msg.textContent="✓ "+key+" serisi oluşturuldu, şimdi çap/fiyat ekleyebilirsin!";msg.style.display="block";setTimeout(()=>msg.style.display="none",2500);
+}
+
+function addNewMatCode(ser){
+  const codeEl=document.getElementById("newMatCode"),priceEl=document.getElementById("newMatPrice"),boyEl=document.getElementById("newMatBoy");
+  const code=codeEl.value.trim().toUpperCase();
+  const price=parseFloat(priceEl.value);
+  const boy=parseFloat(boyEl.value)||330;
+  if(!code){alert("Kod girin!");return}
+  if(isNaN(price)||price<=0){alert("Geçerli bir fiyat girin!");return}
+  if(PDB[ser].i.some(it=>it.c===code)){alert("Bu kod zaten mevcut: "+code);return}
+  const item={c:code,p:price,custom:true};
+  if(boy&&boy!==330)item.el=boy;
+  PDB[ser].i.push(item);
+  AM.push({...item,sk:ser,sl:PDB[ser].l});
+  savePricesToLS();
+  codeEl.value="";priceEl.value="";boyEl.value="330";
+  renderAdminContent();
+  const msg=document.getElementById("adminMsg");msg.textContent="✓ "+code+" eklendi!";msg.style.display="block";setTimeout(()=>msg.style.display="none",2000);
+}
+function removeMatCode(ser,idx){
+  const it=PDB[ser].i[idx];
+  if(!it||!it.custom)return;
+  if(!confirm(it.c+" kodunu silmek istediğinize emin misiniz?"))return;
+  PDB[ser].i.splice(idx,1);
+  const ai=AM.findIndex(x=>x.c===it.c&&x.sk===ser);
+  if(ai>-1)AM.splice(ai,1);
+  savePricesToLS();
+  renderAdminContent();
+}
 
 function saveAdmin(){
   document.querySelectorAll("#adminContent input.changed").forEach(inp=>{
