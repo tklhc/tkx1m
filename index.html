@@ -1135,6 +1135,11 @@ function saveAdmin(){
 
 function applyBulk(ser){
   const pct=parseFloat(document.getElementById("bulkPct").value);
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
   if(isNaN(pct)||pct===0){alert("Geçerli bir yüzde girin!");return}
   const mult=1+(pct/100);
   PDB[ser].i.forEach(it=>{if(it.p!=null)it.p=Math.round(it.p*mult*100)/100});
