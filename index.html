@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Karbür Maliyet">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Kesici Takım Hesaplayıcı — Desktop</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
@@ -429,6 +436,22 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-app
   100% { transform: scale(1); }
 }
 .rp-total-value.bump { animation: countPulse 0.35s ease-out; }
+
+@media (max-width: 900px) {
+  html, body { overflow: auto; height: auto; }
+  .desktop { display: flex; flex-direction: column; height: auto; min-height: 100vh; }
+  .topbar { flex-wrap: wrap; height: auto; padding: 12px 16px; gap: 10px; position: sticky; top: 0; z-index: 50; }
+  .topbar-right { width: 100%; margin-left: 0; flex-wrap: wrap; }
+  .topbar-right .topbar-btn { flex: 1; justify-content: center; }
+  .sidebar, .main, .result-panel { width: 100%; border-left: none; border-right: none; overflow: visible; padding: 16px; }
+  .sidebar { border-bottom: 1px solid var(--border); }
+  .result-panel { border-top: 1px solid var(--border); }
+  .input-grid { grid-template-columns: 1fr; }
+  .rp-total-value { font-size: 30px; }
+  .admin-body, .quote-body-d { flex-direction: column; }
+  .quote-body-d { display: flex; }
+  .admin-tabs-v { width: 100%; }
+}
 
 /* ── MARGIN METER ────────────────────────────────── */</style>
 </head>
