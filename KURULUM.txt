@@ -1,0 +1,10 @@
+KARBÜR MALİYET – Android uygulaması (PWA)
+
+1) Bu klasörün içindekileri (index.html, sw.js, manifest.json, ikonlar, fonts/, vendor/) HTTPS ile açılan bir adrese koy.
+   Örn. mevcut ÜTS sunucunda statik klasör: https://sunucu-adresin/maliyet/
+   (Hepsi aynı klasörde kalmalı. Tek dosya olarak çalışmaz, servis çalışanı HTTPS ister.)
+2) Redmi 13'te Chrome ile o adresi aç → ⋮ menü → "Uygulamayı yükle" (veya "Ana ekrana ekle").
+3) Uygulama ana ekranda "Karbür Maliyet" ikonuyla, tam ekran ve internet olmadan çalışır.
+
+Güncelleme: index.html'i değiştirip sw.js içindeki CACHE adındaki sürüm numarasını artır (v1 → v2). İnternet varken uygulama kendini günceller.
+Not: Yönetim ekranında elle yaptığın fiyat değişiklikleri telefonun kendi hafızasında durur, her cihazda ayrı.
